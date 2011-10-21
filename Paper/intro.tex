@@ -1,0 +1,61 @@
+\section{Introduction}\label{sec-intro}
+In the participatory sensing, users with mobile devices
+(e.g. cell phones and GPS devices) participate in the collection of environmental
+information around them and submit the collected data to a central server
+for processing, analysis, and storage\cite{DBLP:conf/mobisys/MunRSYBEHHWB09}.
+An example is the OpenStreetMap\cite{DBLP:journals/pervasive/HaklayW08}
+project which collects user contributed GIS
+data (such as GPS traces and POIs) and constructs an online map, from mobile
+data, open for anyone to use. 
+Other examples of participatory sensing
+include cooperative collection of gas prices \cite{DBLP:conf/dcoss/DongKCB08},
+monitoring of traffic conditions \cite{DBLP:conf/dcoss/ConceicaoFB08}, and
+photo sharing through mobile applications such as Facebook and Instagram.
+
+This model of "crowd" data collection has many advantages due to that the
+dynamic environmental data and information are quickly captured by mobile
+users and disseminated to other users or to central servers for analysis.
+Government censoring of information captured and distributed is also less
+effective in this model since there could be many mobile devices that are
+capturing the same event.
+
+Despite the advantages, privacy of the users who contribute is a major
+issue in participatory sensing and crowd-sourcing. Users may not want to
+leak their locations with the contributed data lest their movement being
+tracked. In the case of controversial photos, a user may not want to
+reveal his or her identity to the server (such as
+Instagram\footnote{http://instagr.am/}) that collect
+the data since the user's identity may be saved on the server and later
+uncovered by government entities for prosecution. It is a fact that
+services on the web collect user identifications along with the data
+submitted by their users\cite{wiki_privacy}. Even with websites, such as
+Wikipedia\footnote{http://www.wikipedia.com} and
+4chan\footnote{http://www.4chan.org/faq\#what4chan}, that advise to be
+anonymous log IP address of contributors. With
+an IP address (and if IP uniquely identify a user), a piece of
+information stored on a server (be it a photo, or a file) can be traced
+back to a user thus compromise the user's privacy.
+
+How to guarantee that a server will not gather users identification when
+a service advertise it? In this paper, we focus on the problem of keeping
+user's identity private
+in participatory sensing and crowd-sourcing environment. We want to keep
+a request to a server anonymous to all entities in a network including
+the server itself (since we know they log user activities).
+We study a way to
+minimize the probability of identifying and linking a piece of data
+in a computer network to a user.
+Then we propose a way to protect the identity of participants
+of such computing model by using an anonymous networking protocol.
+The goal of the protocol is to remove the source information from the data
+packet. We call this One-Way Protocol since the source information is
+completely removed, and the server is unable to reply any kind of
+acknowledgement back to the client. The protocol will be implemented on
+both the server and the client to achieve the anonymous effect.
+
+%In Section 2, we propose a fundamental theoretical novel One-Way protocol
+%that probably has no practical usefulness except to demonstrate the idea.
+%(In Section X we present other solutions to this problem). In section 3
+%we refine the theoretical protocol so that it can be architectures on
+%existing networking infrastructures and technologies. Validation and data
+%integrity is covered in section 4. 

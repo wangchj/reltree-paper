@@ -1,0 +1,8 @@
+*.bak
+*.log
+*.sav
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.pdf

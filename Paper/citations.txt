@@ -1,0 +1,2 @@
+1. Estrin, D., “Participatory Sensing: Applications and Architecture”, In Proceedings of the 8th International Conference on Mobile systems, applications and services (MobiSys’10), San Francisco, CA  June 2010.
+2. L. Hu, C. Shahabi, "Privacy Assurance in Mobile Sensing Networok: Go Beyond Trusted Servers",Proc. of eighth Annual IEEE International Conference on Pervasive Computing and Communications - Workshops, Mannheim, Germany, 2010.

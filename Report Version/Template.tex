@@ -1,0 +1,86 @@
+%\documentclass[times, 10pt,twocolumn]{article}
+\documentclass[times,10pt,onecolumn]{article}
+\usepackage{latex8}
+\usepackage{times}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amssymb}
+\usepackage{psfrag,graphicx}
+\usepackage{doublespace}
+\input{psfig.sty}
+\pagestyle{empty}
+
+\newenvironment{proof}[1][Proof]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Example]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\newcommand{\qed}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \hskip1.5em plus0em minus0.5em \fi \nobreak
+      \vrule height0.75em width0.5em depth0.25em\fi}
+
+\newcommand{\prf}{\noindent{\textbf{Proof:}} }
+\newcommand{\bbox}{\vrule height7pt width4pt depth1pt}
+\newcommand{\eprf}{\bbox\vspace{0.1in}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{heuristic}[theorem]{Heuristic}
+
+\begin{document}
+
+\setstretch{1}{
+\title{Anonymous Network Protocol}
+
+%\author{\hspace*{25pt} Wei-Shinn Ku$^{\S}$ \hspace*{1pt} and \hspace*{1pt} ???$^{\dag}$\\
+%\hspace*{-200pt}\\
+%\hspace*{20pt}{$^\S$Dept. of Computer Science and Software
+%Engineering, Auburn University, Auburn, AL 36849} \\
+%%\hspace*{20pt}{$^\dag$Department~of~Computer~Science, University , City 17590} \\
+%\hspace*{20pt}{\texttt{\{weishinn@auburn.edu,???@.edu\}}}
+%\\}
+
+\maketitle
+
+%\begin{abstract}
+%In the participatory sensing, users with mobile devices (e.g. cell phones
+%and laptop computers) participate in the collection of environmental
+%information around them and submit the collected data to a central server
+%for processing and analysis. Identity privacy of mobile users in this model
+%is a major concern that hinders the adoption of this computing model. In
+%this paper, we propose an anonymous networking protocol approach to protect
+%the identity of part
+%icipants of such computing model.
+%\end{abstract}
+
+%\input{intro}
+%\section{Survey}\label{sec_sruvey} %create a separate file for this section
+\input{protocol}
+
+%\section{Related Work}\label{sec-relwork}
+%\input{related}
+
+%\section{System Architecture}\label{sec-design}
+%\input{arch}
+
+%\section{Experimental Validation}\label{sec-experiment}
+%\input{experiments}
+
+%\section{Conclusions}\label{sec-conc}
+%\input{conc}
+
+%\section{Acknowledgements}\label{sec-ack}
+%\input{ack}
+
+
+\setstretch{1}{
+\bibliographystyle{plain}
+\bibliography{Jeff_citations}
+\end{document}
