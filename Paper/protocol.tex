@@ -2,8 +2,8 @@
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=3in]{figure1.eps}
-\caption{\small \sl Anonymous Protocol.\label{fig:Stupendous}}
+\includegraphics[width=3.4in]{one-way.eps}
+\caption{\small \sl Anonymous Protocol.\label{fig:one-way}}
 \end{center}
 \end{figure}
 
@@ -54,7 +54,7 @@ We use $n_0$ to denote the originator of the data, and $n_h$ the last hop
 that forward the data to the final receiver. For control messages travel
 in the direction from sender to receiver, a node $n_i$ forwards the message
 to its successor, such that $n_i \rightarrow n_{i+1}$. Similarly, for
-control messages travel from the receiver back to the sender, a node 
+control messages travel from the receiver back to the sender, a node
 forwards the messages to its predecessor, such that
 $n_{i} \rightarrow n_{i-1}$. Table~\ref{tab:notations} summarizes the
 notations used in this paper.
@@ -95,7 +95,7 @@ of the connection request is to establish a peer based route on which
 acknowledgement of data transmission can be sent.
 
 The sender initiates a connection by constructing an anonymous
-connection request message, $c$. A request message contains the 
+connection request message, $c$. A request message contains the
 connection identifer $I_s$, routing
 address (or identification), $A_r$, of the receiver,initial sequence
 number $s_0$, and a hop count,

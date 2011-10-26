@@ -33,12 +33,23 @@ Auburn University, AL, USA\\
 
 \begin{abstract}
 In the participatory sensing, users with mobile devices (e.g. cell phones
-and laptop computers) participate in the collection of environmental
+and location-aware devices) participate in the collection of environmental
 information around them and submit the collected data to a central server
 for processing and analysis. Identity privacy of mobile users in this model
 is a major concern that hinders the adoption of this computing model. In
-this paper, we propose an anonymous networking protocol approach to protect
-the identity of participants of such computing model.
+addition, bandwidth and computing capability are limited for mobile devices.
+Unfortunately, most previously proposed work on user anonymity are not
+designed specific for mobile environment and thus resource constraint is
+not main focus of their solutions.
+In this paper, we propose One-way, an anonymous networking protocol designed
+with mobile participatory sensing environment in mind. Our protocol utilizes
+peer-to-peer network to facilitate anonymous data transmission to protect
+sender identity, but the actual data payload are not sent through peers. For
+data, we remove sender information and transmission through direct path.
+Since the data are not copied to multiple peers, our design consumes less
+resources. Our evaluation shows that our approach utilizes less overall
+bandwidth with lower transmission latency and more scalable than other
+more complex designs.
 \end{abstract}
 
 % NOTE keywords are not used for conference papers so do not populate them
