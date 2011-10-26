@@ -1,57 +1,61 @@
-\section{Attack Models}\label{sec-attack}
 
-In this section we consider several attack models and discuss how our
-design offer protection against these attacks.
+In this section we consider several attack models and discuss how
+our design offers protection against these attacks.
 
 \subsection{Server Attack}
-The first attack model is server attack. In this attack, the server cannot
-be trusted or can be a source of identity of disclosure. Most services logs
-the identity of the users with the data submitted through their services.
-If the server is malicious, or mandated by someone powerful for disclosure,
-privacy of the users are compromised.
+The first attack model is server attack. In this attack, the
+server cannot be trusted or can be a source of identity of
+disclosure. Most services log the identity of users with the data
+submitted through their services. If the server is malicious, or
+mandated by someone powerful for disclosure, privacy of users is
+compromised.
 
-First we analyze the payload transmission part of our design against
-server attack. We assume that the server can see the packets sent to it,
-but does not see the packets in the network before it reaches it. In
-other words the server does not control the Internet and cannot perform
-traffic analysis on the Internet. Under this assumption, in our One-Way
-protocol the sender has the anonymity level of beyond suspicion since
-a server cannot infer any identity information from the data packet it
-receives. The only linking information is the identity of the network
-device (e.g. link layer switch) at the last hop of the route. We assume
-the service does not control the Internet, therefore it cannot link
-this information back to the sender.
+First, we analyze the payload transmission part of our design
+against server attack. We assume that the server can see the
+packets sent to it, but does not see the packets in the network
+before they reach it. In other words, the server does not control
+the Internet and cannot perform traffic analysis on the Internet.
+Under this assumption, in our One-Way protocol the sender has the
+anonymity level of beyond suspicion since a server cannot infer
+any identity information from the data packets it receives. The
+only linking information is the identity of the network device
+(e.g., link layer switch) at the last hop of the route. We assume
+the service does not control the Internet, therefore it cannot
+link this information back to the sender.
 
-Next we analyze our validation protocol again server attack. Keep in mind,
-our validation uses peer network to transmit acknowledgement and control
-messages.
-Since the server has to run our anonymous validation protocol, it is
-consider one of the network peers and therefore it can
-find out the users in the peer network, but the server does not know the
-original hop count $h$ of the control packets. In addition, any peer can
-potentially be connected with any other peers therefore, the sender is
-also beyond suspicion in this case.
+Next, we analyze our validation protocol against server attack.
+Keep in mind that our validation mechanism utilizes peer network
+to transmit acknowledgements and control messages. Since the
+server has to execute our anonymous validation protocol, it is
+considered one of the network peers and therefore it can find out
+the users in the peer network, but the server does not know the
+original hop count $h$ of the control packets. In addition, any
+peer can potentially be connected with any other peers.
+Consequently, the sender is also beyond suspicion in this case.
 
-\subsection{Eavesdrop and Traffic Analysis}
+\subsection{Eavesdropper and Traffic Analysis}
 
-In eavesdrop attack, we assume that the data transmission route is divided
-into segments each controlled by a network administrator. An attacker is
-able to listen to the traffic of a segment, but cannot eavesdrop
-on all the network segments of the route. In other words, the attacker
-not have the full view of the entire route, but only a segment.
+In eavesdropper attack, we assume that the data transmission route
+is divided into segments each controlled by a network
+administrator. An attacker is able to listen to the traffic of a
+segment, but cannot eavesdrop on all the network segments of the
+route. In other words, the attacker does not have the full view of
+the entire route, but only a segment.
 
-There are two scenarios. The first scenario is that the sender of the
-data does not reside on the network on which the attacker is eavesdropping
-and the the level of anonymity for the sender is beyond suspicion. Although
-the attacker is able to listen to the traffic to his network, it is
-unable to see who the sender is from the other network.
+There are two scenarios. The first scenario is that the sender of
+the data does not reside on the network on which the attacker is
+eavesdropping and the the level of anonymity for the sender is
+beyond suspicion. Although the attacker is able to listen to the
+traffic to her network, she is unable to see who the sender is in
+other network segments.
 
-The second scenario is that the sender and the attacker are on the same
-network. In this case the attacker is able to analyze the traffic of any
-node on the network. In this scenario, our design is unable to protect the
-identity of the sender and the level of anonymity is exposed. The way the
-attack could get the sender's identity is to compare the incoming and
-outgoing traffic for every node in the network. For the nodes that have
-outgoing traffic for a specific content without corresponding incoming
-traffic is suspected of data originator. Encryption of data on top of our
-design can mitigate this attack.
+The second scenario is that the sender and the attacker are on the
+same network. In this case the attacker is able to analyze the
+traffic of any node on the network. In this scenario, our design
+is unable to protect the identity of the sender and the level of
+anonymity is exposed. The way that the attack could get the
+sender's identity is to compare the incoming and outgoing traffic
+for every node in the network. For the nodes that have outgoing
+traffic for a specific content without corresponding incoming
+traffic is suspected of data originator. Encryption of data on top
+of our design can mitigate this attack.

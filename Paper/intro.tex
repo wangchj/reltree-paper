@@ -1,87 +1,90 @@
-\section{Introduction}\label{sec-intro}
-In the participatory sensing, users with mobile devices
-(e.g. cell phones and GPS devices) participate in the collection of environmental
-information around them and submit the collected data to a central server
-for processing, analysis, and storage\cite{DBLP:conf/mobisys/MunRSYBEHHWB09}.
-An example is the OpenStreetMap\cite{DBLP:journals/pervasive/HaklayW08}
-project which collects user contributed GIS
-data (such as GPS traces and POIs) and constructs an online map, from mobile
-data, open for anyone to use.
-Other examples of participatory sensing
-include cooperative collection of gas prices\cite{DBLP:conf/dcoss/DongKCB08},
-monitoring of traffic conditions\cite{DBLP:conf/dcoss/ConceicaoFB08}, and
-photo sharing through mobile applications such as Facebook and Instagram.
 
-This model of "crowd" data collection has many advantages due to that the
-dynamic environmental data and information are quickly captured by mobile
-users and disseminated to other users or to central servers for analysis.
-Government censoring of information is also less
-effective in this model since there could be many mobile devices that are
-capturing the same event.
+In participatory
+sensing~\cite{conf/sensys/ReddyBEHS07,conf/sensys/DuttaAKMMWW09},
+users with mobile devices (e.g., cell phones with GPS chips)
+participate in the collection of environmental information around
+them and submit the collected data (image, audio, video, etc.) to
+a central server for process, analysis, and
+storage~\cite{DBLP:conf/mobisys/MunRSYBEHHWB09}. An example is the
+OpenStreetMap~\cite{DBLP:journals/pervasive/HaklayW08} project,
+which collects user contributed GIS data (such as GPS traces and
+POIs) and constructs an online map, from mobile data, open for the
+public to use. Other examples of participatory sensing include
+cooperative collection of gas
+prices~\cite{DBLP:conf/dcoss/DongKCB08}, monitoring of traffic
+conditions~\cite{DBLP:conf/dcoss/ConceicaoFB08}, and photo sharing
+through mobile applications such as Facebook and Instagram.
 
-Despite the advantages, privacy of the users who contribute is a major
-issue in participatory sensing and crowd-sourcing. Users may not want to
-leak their locations with the contributed data lest their movement being
-tracked. In the case of controversial photos, a user may not want to
-reveal his or her identity to the collection server (such as
-WikiLeaks\footnote{http://wikileaks.org/})
-since the user's identity may be saved on the server and later
-uncovered by government entities for prosecution. It is a fact that
-services on the web collect user identifications along with the data
-submitted by their users\cite{wiki_privacy}. Even with websites, such as
+This model of ``crowd" data collection has many advantages due to
+that the dynamic environmental data and information are quickly
+captured by mobile users and disseminated to other users or to
+central servers for analysis. Government censoring of information
+is also less effective in this model since there could be many
+mobile devices that are capturing the same event.
+
+Despite the advantages, privacy of the users who contribute is a
+major issue in participatory sensing and crowd-sourcing. Users may
+not want to leak their locations with the contributed data lest
+their movement should be
+tracked~\cite{conf/icde/YiuJHL08,journals/pvldb/WangL09}. In the
+case of controversial photos, a user may not want to reveal his or
+her identity to the collection server (such as
+WikiLeaks\footnote{http://wikileaks.org/}) since the user's
+identity may be saved on the server and later uncovered by
+government entities for prosecution. It is a fact that services on
+the web collect user identifications along with the data submitted
+by their users~\cite{wiki_privacy}. Even with websites, such as
 Wikipedia\footnote{http://www.wikipedia.com} and
-4chan\footnote{http://www.4chan.org/faq\#what4chan}, that advertise to be
-anonymous, log IP address of contributors.
-Although IP address does not uniquely identify an individual, cellular
-data service providers are required by law to keep record of assignment of
-IP addresses to mobile users for a period of time\footnote{http://www.law.cornell.edu/uscode/18/usc\_sec\_18\_00002703----000-.html}.
-With an IP address, a piece of
-information stored on a server (be it a photo, or a file) can be traced
-back to a user using the technique discussed in \cite{DBLP:journals/ijufks/Sweene02}
-thus compromise the user's privacy.
+4chan\footnote{http://www.4chan.org/faq\#what4chan} that advertise
+to be anonymous log IP addresses of contributors. Although an IP
+address does not uniquely identify an individual, cellular data
+service providers are required by law to keep record of assignment
+of IP addresses to mobile users for a period of
+time\footnote{http://uscode.house.gov/download/pls/18C121.txt}.
+With an IP address, a piece of information stored on a server (be
+it a photo, or a file) can be traced back to a user using the
+technique discussed in~\cite{DBLP:journals/ijufks/Sweene02} thus
+compromises the user's privacy.
 
-How to guarantee that a server will not gather users identification when
-a service advertise it? Many previous works
-\cite{DBLP:conf/uss/DingledineMS04} \cite{DBLP:journals/cacm/ReiterR99}
-\cite{DBLP:journals/jcs/LevineS02} \cite{DBLP:conf/percom/HuS10}
-(discussed in the next section)
-have addressed the issues of user anonymity on the Internet. Unfortunately,
-most previously proposed solutions are designed for the older model
-of desktop computing where network bandwidth and computing power are not major concerns.
-In mobile environment, both bandwidth and computational capability are limited
-partially due to the size of devices and battery power constraints.
+How to guarantee that a service provider will not gather users'
+identification? Many previous
+works~\cite{DBLP:conf/uss/DingledineMS04,DBLP:journals/cacm/ReiterR99,
+DBLP:journals/jcs/LevineS02} have addressed the issues of user
+anonymity on the Internet. Unfortunately, most previously proposed
+solutions are designed for the older computing model of desktop
+computing where network bandwidth and computing power are not
+major concerns. In mobile environments, both bandwidth and
+computational capability are limited partially due to the size of
+devices and battery power constraints.
 
-In this paper, we propose an anonymous network protocol with constraints
-of mobile, participatory sensing environment in mind. The goal is to design a
-solution that is simple so that it does not consume to much resource for
-the mobile devices (resources being bandwidth and computational power),
-at the same time provides adequate protection for privacy.
-We want to keep the identity of data originators (senders) private to
-various parties in a computer network, especially to the data collection
-server(receiver) since without identity information associated with submitted
-data on the server, linking to originator is difficult. Although we focus
-on keeping sender anonymous to the server, we believe our solution has enough
-protection from other parties in a network.
-Our protocol is to remove the source information from the data
-packet. We call this One-Way Protocol since the source information is
-completely removed, and the server is unable to reply any kind of
-acknowledgement back to the client. The protocol will be implemented on
-both the server and the client to achieve the anonymous effect.
+In this paper, we propose an anonymous data sharing method with
+constraints of mobile, participatory sensing environments in mind.
+The goal is to design a solution that is simple so that it does
+not consume to much resource for mobile devices (resources being
+bandwidth and computational power), and at the same time provide
+adequate protection for privacy. We want to keep the identity of
+data owners (senders) private to various parties in a computer
+network, especially to the data collection server (receiver) since
+without identity information associated with submitted data on the
+server, linking to data originator is difficult. Although we
+mainly focus on keeping sender anonymous to the server, we believe
+our solution has enough protection from other parties in a
+network. Our mechanism is to remove the source information from
+data packets. We call this One-Way Protocol since the source
+information is completely removed, and the server is unable to
+reply any kind of acknowledgement back to the client. The protocol
+will be implemented on both the server and the client to achieve
+the anonymous effect.
 
-In section~\ref{sec-related-works}, we discuss previous works for anonymity
-on computer networks.
-We each work, we identify strengths and weaknesses relative to our design
-goals.
-In Section~\ref{sec-protocol}, we present our anonymous One-Way protocol.
-We discuss how data payload is transmitted and how data is verified although
-the server does not know the identity of the sender.
-Section~\ref{sec-imp} presents implementation issues.
-Section~\ref{sec-attack} discusses a few attack models.
-Section~\ref{sec-evaluation} presents our performance evaluations.
-Section~\ref{sec-conc} concludes our paper.
-
-%that probably has no practical usefulness except to demonstrate the idea.
-%(In Section X we present other solutions to this problem). In section 3
-%we refine the theoretical protocol so that it can be architectures on
-%existing networking infrastructures and technologies. Validation and data
-%integrity is covered in section 4. 
+The rest of this paper is organized as follows. In
+section~\ref{sec-related-works}, we survey previous works for
+anonymity on data communication. For each work, we identify
+strengths and weaknesses relative to our design goals. We present
+our anonymous One-Way protocol in Section~\ref{sec-protocol}. We
+discuss how data payload is transmitted and how uploaded data is
+verified although the server does not know the identity of the
+sender. Section~\ref{sec-imp} presents the implementation issues
+and Section~\ref{sec-attack} discusses a few attack models. The
+experimental validation of our design in
+Section~\ref{sec-evaluation}. Section~\ref{sec-conc} concludes
+this paper with a discussion of future work.

@@ -1,69 +1,76 @@
-\section{Related Works}\label{sec-related-works}
-One of the earliest work on anonymous communication is on untraceable
-electronic mail by Chaum\cite{DBLP:journals/cacm/Chaum81}. The work proposed
-a way of sending an electronic mail to a receiver in which the sender
-remain anonymous using one or a series of proxy computers called Mixes.
-Chaum's solution relies heavily on public key cryptography in a way that
-before forwarding a mail to a mix, the message and the receiver's address
-is encrypted using the mix's public key. Upon receiving an electronic
-message, the mix extracts the information
-and forwards the mail to the intended receiver. In the case of multiple
-mixes, the sender performs one public key cryptography for each mixes before
-sending a mail to the first mix. The mix then forward it to the next mix
-and so on until the mail reaches the receiver. One of the drawback of the
-solution proposed in \cite{DBLP:journals/cacm/Chaum81} is scalability since
-the senders depend on fixed proxies and if there are not proxies, the
-solution will not work. Also multiple public key cryptography is expensive
-for mobile devices. Multiple public key is acceptable for small file, but
-for large files that need to be broken down and sent with multiple segments,
-multiple encryption may not be acceptable.
 
-Another well known research of sender anonymity is the
-onion routing\cite{DBLP:conf/uss/DingledineMS04}. The onion routing
-follows the similar approach proposed by Chaum of
-using multiple proxies and multiple encryptions. Before sending a file,
-the sender selects a number of proxies called onion routers. The selected
-routers have no say in the selection process, thus mitigating malicious
-node collaboration attack. After selecting the routers, the sender
-encrypts its data with the key of the first router, then encrypt the result
-of that with the key of the second router, and does the same for all the
-routers. Onion routing is robust in terms
-of security and can be used in many applications, but it has the same
-drawback as in Chaum's approach that it is computationally expensive
-because of the multiple encryptions. Our solution does not impose multiple
-encryption to the application, but give that choice to the developer
-of the application.
+One of the earliest work on anonymous communication is on
+untraceable electronic mail by
+Chaum~\cite{DBLP:journals/cacm/Chaum81}. The work proposes a way
+of sending an electronic mail to a receiver in which the sender
+remains anonymous using one or a series of proxy computers called
+\emph{mix}. Chaum's solution relies heavily on public key
+cryptography in a way that before forwarding a mail to a mix, the
+message and the receiver's address is encrypted using the mix's
+public key. Upon receiving an electronic message, the mix extracts
+the information and forwards the mail to the intended receiver. In
+the case of multiple mixes, the sender performs one public key
+cryptography for each mixes before sending a mail to the first
+mix. The mix then forward it to the next mix and so on until the
+mail reaches the receiver. One of the drawbacks of the solution
+proposed in~\cite{DBLP:journals/cacm/Chaum81} is scalability since
+the senders depend on fixed proxies and if there are no proxies,
+the solution will not work. Also multiple public key cryptography
+is expensive for mobile devices. Multiple public key encryptions
+is acceptable for small files, but for large files that need to be
+broken down and sent with multiple segments, multiple encryptions
+may not be acceptable.
+
+Another well known research of sender anonymity is the onion
+routing\cite{DBLP:conf/uss/DingledineMS04}. The onion routing
+follows the similar approach proposed by Chaum of using multiple
+proxies and multiple encryptions. Before sending a file, the
+sender selects a number of proxies called onion routers, which
+mitigates malicious node collaboration attacks. After selecting
+the routers, the sender encrypts the data with the key of the
+first router, then encrypts the result of that with the key of the
+second router, and does the same for all the rest routers. Onion
+routing is robust in terms of security and can be used in many
+applications, but it has the same drawback as in Chaum's approach
+that it is computationally expensive because of the multiple
+encryptions. Our solution does not impose multiple encryptions to
+the application, but leaves that choice to the developer of the
+application.
 
 Freenet, a distributed anonymous storage system was proposed
-in \cite{DBLP:conf/diau/ClarkeSWH00}. The goal of the system is to utilize
-the peers in the network for storage and at the same time achieving anonymity
-of the author of the files. Freenet utilizes file keys obtained by public
-key cryptography and hashing to achieve efficient file storage and searching.
-In order to achieve author anonymity, a node on the Freenet sends a file
-to a peer, and the peer forwards the file to another peer and so on.
-Although, the system pertains to file storage,
-the technique of utilizing peers to hide the identity of the originator of
-a file is useful in our scenario and we take a similar approach with our
-data verification of our design.
+in~\cite{DBLP:conf/diau/ClarkeSWH00}. The goal of the system is to
+utilize the peers in the network for storage and at the same time
+achieving anonymity of the authorship of the files. Freenet
+employs file keys obtained by public key cryptography and hashing
+to achieve efficient file storage and searching. In order to
+achieve author anonymity, a node on the Freenet sends a file to a
+peer, and the peer forwards the file to another peer and so on.
+Although, the system pertains to file storage, the technique of
+utilizing peers to hide the identity of the originator of a file
+is useful in our scenario and we take a similar approach with data
+verification of our design.
 
-Crowds\cite{DBLP:journals/cacm/ReiterR99} utilizes peer-to-peer network
-to blend the sender into a large number of users (a crowd) so that the
-receiver does not know the true identity of the sender.
-To send a file, the sender joins a close-by crowd and sends the file to
-one of its peers in the crowd called jondo (a short name for John Doe).
-When a peer receives a send request, it decides whether to forward the
-data to another peer based on the variable $p_f$ that determines the
-probability of forwarding the packet.
+Crowds~\cite{DBLP:journals/cacm/ReiterR99} utilizes peer-to-peer
+networks to blend the sender into a large number of users (a
+crowd) so that the receiver does not know the true identity of the
+sender. To send a file, the sender joins a close-by crowd and
+sends the file to one of her peers in the crowd called jondo (a
+short name for John Doe). When a peer receives a send request, she
+decides whether to forward the data to another peer based on the
+variable $p_f$ that determines the probability of forwarding the
+packet.
 
-The closest work to ours is research on privacy for mobile users in sensing
-networks \cite{DBLP:conf/percom/HuS10} by Hu and Shahabi. The assumption of the
-work is that data collection service providers often log the identity of the
-user with the file they submit. The disclosure of this sensitive information
-leads to the compromising of user privacy. The solution is to leverage
-social network to forward a file to multiple peers before sending it to
-the server. Large consumption of network bandwidth is a big disadvantage in
-this approach since a file is sent to multiple users, and this concern is
-exacerbated in wireless mobile environments where bandwidth is limited.
-In our approach, we do not forward the payload of the data to multiple peers,
-only the control messages of the data transmission and saves tremendous amount
-of bandwidth. 
+The closest work to ours is the research on privacy assurance for
+mobile users in sensing networks by Hu and
+Shahabi~\cite{DBLP:conf/percom/HuS10}. The assumption of the work
+is that data collection service providers often log the identities
+of users with the file they submit. The disclosure of this
+sensitive information leads to the compromising of user privacy.
+The solution is to leverage social network to forward a file to
+multiple peers before sending it to the server. Large consumption
+of network bandwidth is a big disadvantage in this approach since
+a file is sent to multiple users, and this concern is exacerbated
+in wireless mobile environments where bandwidth is limited. In our
+approach, we do not forward the payload of the data to multiple
+peers, only the control messages of the data transmission and
+saves tremendous amount of bandwidth.
