@@ -7,4 +7,4 @@
 *.dvi
 *.pdf
 ._*
-.synctex.gz
+*.synctex.gz
