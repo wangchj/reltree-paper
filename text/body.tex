@@ -63,47 +63,88 @@ Figure~\ref{fig:relational_database} illustrates a relational database with 2 ta
 
 \subsection{Common Tree Operations}
 
-In this section, we define a few common useful operation on tree. All examples will using the tree of Figure~\ref{fig:tree}.
+In this section, we define common operations on trees. All examples will using the tree of Figure~\ref{fig:tree}.
 
-\begin{table}[h]
-\centering
-\begin{tabular}{|l|l|}
-\hline
-{\bf Operation} & {\bf Description} \\ \hline\hline
-$Find\_Parent(n)$ & Find the parent of a node $n$ \\
-$Find\_Children(n)$ & Find the children of a node $n$\\
-$Member(n, T)$ & Test if node $n$ is part of tree $T$\\
-$Find\_Ancestors(n)$ & Find ancestors of node $n$\\
-$Find\_Descendants(n)$ & Find descendants of a node $n$\\
-$Get\_Tree(n)$ & Gets the hierarchy of the tree\\
-\hline
-\end{tabular}
-\caption{Common operations\label{table:common_operations}}
-\end{table}
 
-The following table shows sample inputs and outputs of the operations.
+%%% Enumeration of operations %%%
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{|l|l|}
-\hline
-{\bf Example} & {\bf Output} \\ \hline\hline
-$Find\_Parent(A)$ & null \\
-$Find\_Parent(B)$ & $A$ \\
-\hline
-$Find\_Children(A)$ & $\{B, C, D\}$\\
-$Find\_Children(E)$ & $\{\}$\\
-\hline
-$Member(B, A)$ & true \\
-\hline
-$Find\_Ancestors(E)$ & $\{A, B\}$\\
-$Find\_Descendants(A)$ & $\{B, C, D, E, F, G, H, I, J\}$\\
-$Find\_Descendants(G)$ & $\{\}$\\
-$Get\_Tree(n)$ & Depth-first traversal of the tree\\
-\hline
-\end{tabular}
-\caption{Common operation Examples\label{table:common_operation_examples}}
-\end{table}
+\begin{enumerate}
+
+\item $Root(n) \rightarrow r$ : given a node $n$, this operation finds the root $r$ of the tree in which $n$ resides: $Member(n, r) \rightarrow true$.
+
+    \begin{align*}
+    & Root(A) \rightarrow A \\
+    & Root(E) \rightarrow A
+    \end{align*}
+
+    
+\item $Parent(n) \rightarrow p$ : Given a node $n$, this operation finds the parent node $p$, or $null$ if $n$ is a root node.
+
+    \begin{align*}
+    & Parent(A) \rightarrow  null \\
+    & Parent(B) \rightarrow A
+    \end{align*}
+
+\item $Children(n) \rightarrow \{c_1, c_2, ..., c_n\}$ : Given a node $n$, this operation finds it's child nodes $\{c_1, c_2, ..., c_n\}$. If $n$ is a leaf node (no children), then the empty set is returned.
+
+    \begin{align*}
+    & Children(A) \rightarrow \{B, C, D\} \\
+    & Children(E) \rightarrow \{\}
+    \end{align*}
+    
+\item $Siblings(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : This operation finds a list of nodes $\{n_1, n_2, ..., n_n\}$ that have the same depth as node $n$. If this node has no siblings, the empty set is returned.
+
+    \begin{align*}
+    & Siblings(A) \rightarrow \{\} \\
+    & Siblings(B) \rightarrow \{C, D\}
+    \end{align*}
+
+\item $Leaves(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : This operation returns a set of leaf nodes $\{n_1, n_2, ..., n_n\}$ of the subtree rooted at $n$
+
+    \begin{align*}
+    & Leaves(A) \rightarrow \{E, F, G, H, I, J\} \\
+    & Leaves(B) \rightarrow \{E, F\} \\
+    & Leaves(E) \rightarrow \{E\}
+    \end{align*}
+    
+\item $Height(n) \rightarrow \mathbb{N}$ : Given a node $n$, this operation returns the count of node of longest path from $n$ to a leaf node.
+
+    \begin{align*}
+    & Height(A) \rightarrow 3 \\
+    & Height(E) \rightarrow 1
+    \end{align*}
+    
+\item $Depth(n) \rightarrow \mathbb{N}$ : Given a node $n$, this returns $|Path(n)|$.
+
+    \begin{align*}
+    & Depth(A) \rightarrow 1 \\
+    & Depth(E) \rightarrow 3 \\
+    \end{align*}
+    
+\item $Path(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : given a node $n$, this operation retrieves the list of nodes $\{n_1, n_2, ..., n_n\}$ that forms the path from root to node $n$, where $n_1$ is the root and $n_n$ is $n$. This operation is the same as retrieving all \emph{ancestors} of $n$.
+
+    \begin{align*}
+    & Path(A) \rightarrow {A} \\
+    & Path(E) \rightarrow \{A, B\}
+    \end{align*}
+    
+\item $Member(n, t) \rightarrow boolean$ : given two nodes $n$ and $t$, this operation tests if node $n$ is a \emph{descendant} of node $t$ -- or, if $n$ is in the subtree rooted at $t$.
+
+
+    \begin{align*}
+    & Member(B, A) \rightarrow true \\
+    & Member(A, B) \rightarrow false \\
+    & Member(C, B) \rightarrow false
+    \end{align*}
+    
+\item $Tree(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : Gets the hierarchy of the tree
+
+    \begin{align*}
+    Depth-first traversal of the tree
+    \end{align*}
+
+\end{enumerate} %%% End enumeration of operations %%%
+
 
 It it worth to know two trivial operations:
 
