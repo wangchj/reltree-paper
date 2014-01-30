@@ -63,7 +63,11 @@ Figure~\ref{fig:relational_database} illustrates a relational database with 2 ta
 
 \subsection{Common Tree Operations}
 
-In this section, we define common operations on trees. All examples will using the tree of Figure~\ref{fig:tree}.
+In this section, we define common operations on trees without considering how the trees are implemented in relational model. Section \ref{sec-nested-set} and \ref{sec-adj-list} will cover implementation details and how these operations are to be performed under these relational designs.
+
+This paper only covers read operations, relyig on the assumption that once an hierarchy is inserted into a database, the structure is rarely changed without removing an entire subtree. Insertion operations are assumed to be done via standard SQL insert statements. Hierarchical update and remove operations are to be covered in future works.
+
+Operations thtat will be used in this paper are enumerated below. All examples use the tree of Figure~\ref{fig:tree}.
 
 
 %%% Enumeration of operations %%%
@@ -146,23 +150,9 @@ In this section, we define common operations on trees. All examples will using t
 \end{enumerate} %%% End enumeration of operations %%%
 
 
-It it worth to know two trivial operations:
-
-\begin{enumerate}
-\item Finding the root node of a tree. 
-\item Searching for a node with a specific data item in the database. This operation is trivial since flat query is efficient in database.
-\end{enumerate}
-%Trivial cases
-
-%\begin{enumerate}
-%\item Get root
-%\item Search (find a node)
-%\end{enumerate}
-
-
 %\section{Tree Representation in Relational Database}
 
-\section{Adjacency List}
+\section{Adjacency List}\label{sec-adj-list}
 
 One of the simplest way of representing hierarchy in relational data model is a method called adjacency list. In this approach, a table (we will call it Nodes table) is used to store the nodes of one or multiple trees, and each record of the table represent a node.
 
@@ -265,7 +255,7 @@ PrintTree(char nodeId, int level = 0)
 \end{lstlisting}	
 \end{minipage}
 
-\section{Nested Set}
+\section{Nested Set}\label{sec-nested-set}
 
 Another way of representing hierarchical data in relational database is the nested set model\cite{journals/trj/Kamfonas92}. This model is an extension of the adjacency list model. The goal of this model is to eliminate the need to issue multiple queries to the database (and the use of recursion) by placing ordering on the nodes. Listing~\ref{ns_schema} shows the relational schema for the nested set model.
 
