@@ -10,10 +10,10 @@
     tabsize=2,
     %extendedchars=true,
     breaklines=true,
-    keywordstyle=\color[rgb]{0.15, 0.22, 0.40},
-    commentstyle=\color[rgb]{0.7,0.7,0.7},
-    stringstyle=\color[rgb]{0.89,0.18,0.52},
-    identifierstyle=\color[rgb]{0,0.5,0.51},
+    keywordstyle=\color[rgb]{0.12, 0.2, 0.40},
+    commentstyle=\color[rgb]{0.4,0.4,0.4},
+    stringstyle=\color[rgb]{0,0.5,0.51},
+    identifierstyle=\color[rgb]{0.8,0.09,0.43},
 	frame=l,         
     captionpos=t,
     %keywordstyle=[1]\textbf,
@@ -33,8 +33,9 @@
 %%
 % A listing style that is currently not used.
 %%
-\lstdefinestyle{test_sql}{
+\lstdefinestyle{test}{
     basicstyle=\small\ttfamily,
+    identifierstyle=\color{black},
     %belowcaptionskip=1\baselineskip,
     breaklines=true,
     frame=l,
@@ -47,6 +48,8 @@
     %identifierstyle=\color{blue},
     %stringstyle=\color{orange},
 }
+
+\def\inline{\lstinline[basicstyle=\small\ttfamily,identifierstyle=\color{green}]}
 
 %% 
 % Define Style to gray background and white text.
