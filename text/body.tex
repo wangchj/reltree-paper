@@ -61,7 +61,7 @@ Figure~\ref{fig:relational_database} illustrates a relational database with 2 ta
 \caption{A Relational Database\label{fig:relational_database}}
 \end{figure}
 
-\subsection{Common Tree Operations}
+\subsection{Common Tree Operations}\label{sec_tree_ops}
 
 In this section, we define common operations on trees. We only define data reading operations due to the fact that these operations are the most commonly performed operations in database system after the initial insertion of data. Modification and deletion are less common and are usually trivial cases (compared to a myriad of important reading operations) to correct small mistakes. In addition, before updating or deletion, reading must be performed to locate the correct data to modify. With respect to hierarchical data, once an hierarchy is inserted into a database, the structure is rarely changed without removing an entire subtree.
 
@@ -183,16 +183,78 @@ SELECT * FROM Nodes WHERE Parent='A'
 
 \subsection{Operations}
 
-The operation for finding the root node of a tree with a specific node is is trivial. All we need to do is querying for nodes with \emph{Parent = null} and the specific node ID, as shown below:
+In this section, we present how the operations defined in Section~\ref{sec_tree_ops} can be implemented in the context the adjacency list model. For operations that involve simple queries, we provide only the queries; for operations that requires more complex operations (e.g. loops), we present the algorithm in Java programming language.
 
-\begin{lstlisting}[language=sql, caption=Query for finding the root node for adjacency list method, label=fig:adj_list_find_root]
-SELECT * FROM Nodes WHERE Parent IS NULL AND ID='A'
+\noindent{\bf Root}
+
+If the Nodes table contains only a single hierarchy, the operation of finding the root of an arbitrary node in the tree would be a trivial query of looking for the record whose Parent attribute is null. This is \emph{not} the case for us. We assume that the Nodes table contains records for multiple trees. This complicate the query quite a bit and requires us to use some form of iteration (including recursion) to traverse to the top of the tree (until we reach a node with Parent = null). Listing~\ref{lst_aj_root} shows the code for this operation.
+
+\begin{lstlisting}[language=java, caption=Root for Adjacency List, label=lst_aj_root]
+
+/** Returns the first node after executing the query.*/
+static Node getOneNode(String query){...}
+
+/** Returns the root node of node n. */
+static Node Root(Node n)
+{
+    if(n.Parent == null)
+        return n;
+    Node parent = getOneNode("SELECT * FROM Nodes WHERE ID='" + n.ID + "'");
+    return Root(parent);
+}
+
 \end{lstlisting}
 
-Operations for finding the parent and children node(s) are also trivial. The query for finding children nodes is already shown in Figure~\ref{fig:child_query}. The following example query finds the parent node of node $B$:
 
-\begin{lstlisting}[language=sql, caption=Query for finding the parent node for adjacency list method., label=fig:adj_list_find_parent]
-SELECT Parent FROM Nodes WHERE ID='B'
+\noindent{\bf Parent, Children, Siblings}
+
+The query for these operations are trivial and queries are given in Listing~\ref{lst_aj_parent}
+
+\begin{lstlisting}[language=sql, caption={Parent, Children, and Sibling}, label=lst_aj_parent]
+--
+-- Given a node $n$ and n.ID='E'
+--
+
+-- Get the parent of node E
+SELECT * FROM Nodes WHERE ID=(SELECT Parent FROM Nodes WHERE ID='E')
+
+-- Get the children of node E
+SELECT * FROM Nodes WHERE Parent='E'
+
+-- Get the siblings of node E
+SELECT * FROM Nodes WHERE Parent=(SELECT Parent FROM Nodes WHERE ID='E') AND ID != 'E'
+
+\end{lstlisting}
+
+\noindent{\bf Leaves}
+
+The code for the Leaves operation is shown in Listing~\ref{lst_aj_leaves}.
+
+\begin{lstlisting}[language=java, caption=Leaves, label=lst_aj_leaves]
+
+/** Returns an array of leaf nodes under n. */
+static Node[] Leaves(Node n)
+{
+    ArrayList<Node> result = new ArrayList<Node>();
+    Leaves(n, result);
+    return result.toArray();
+}
+
+/** Recursive method.*/
+static void Leaves(Node n, List<Node> result)
+{
+    Node[] children = getChildren(n);
+    
+    if(children.length == 0)
+    {
+        result.add(n);
+        return;
+    }
+    
+    for(Node child : children)
+        Leaves(child, result);
+}
+
 \end{lstlisting}
 
 Although the preceding operations are easy to perform, the drawback of the adjacency list method is that some of the listed operations require multiple queries to be submitted to the database. These operations follows:
