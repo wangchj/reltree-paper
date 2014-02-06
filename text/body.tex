@@ -127,11 +127,11 @@ Operations thtat will be used in this paper are enumerated below. All examples u
     & Depth(E) \rightarrow 3 \\
     \end{align*}
     
-\item $Path(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : given a node $n$, this operation retrieves the list of nodes $\{n_1, n_2, ..., n_n\}$ that forms the path from root to node $n$, where $n_1$ is the root and $n_n$ is $n$. This operation is the same as retrieving all \emph{ancestors} of $n$.
+\item $Path(n) \rightarrow (n_1, n_2, ..., n_n)$ : given a node $n$, this operation retrieves the sequence of nodes $(n_1, n_2, ..., n_n)$ that forms the path from root to node $n$, where $n_1$ is the root and $n_n$ is $n$. This operation is the same as retrieving all \emph{ancestors} of $n$.
 
     \begin{align*}
-    & Path(A) \rightarrow \{A\} \\
-    & Path(E) \rightarrow \{A, B\}
+    & Path(A) \rightarrow (A) \\
+    & Path(E) \rightarrow (A, B, E)
     \end{align*}
     
 \item $Member(n, t) \rightarrow boolean$ : given two nodes $n$ and $t$, this operation tests if node $n$ is a \emph{descendant} of node $t$ -- or, if $n$ is in the subtree rooted at $t$.
@@ -143,10 +143,11 @@ Operations thtat will be used in this paper are enumerated below. All examples u
     & Member(C, B) \rightarrow false
     \end{align*}
     
-\item $Tree(n) \rightarrow \{n_1, n_2, ..., n_n\}$ : Gets the hierarchy of the tree
+\item $Tree(n) \rightarrow (n_1, n_2, ..., n_n)$ : given a node $n$, this operation returns a sequence of nodes $(n_1, n_2, ..., n_n)$ obtained by breadth-first traversal (BFT) from $n$, where $n_1 = n$. The original tree should be possible to be reconstructed from this sequence.
 
     \begin{align*}
-    Depth-first traversal of the tree
+    & Tree(A) \rightarrow (A, B, C, D, E, F, G, H, I, J) \\
+    & Tree(B) \rightarrow (B, E, F) \\
     \end{align*}
 
 \end{enumerate} %%% End enumeration of operations %%%
@@ -190,7 +191,6 @@ In this section, we present how the operations defined in Section~\ref{sec_tree_
 If the Nodes table contains only a single hierarchy, the operation of finding the root of an arbitrary node in the tree would be a trivial query of looking for the record whose Parent attribute is null. This is \emph{not} the case for us. We assume that the Nodes table contains records for multiple trees. This complicate the query quite a bit and requires us to use some form of iteration (including recursion) to traverse to the top of the tree (until we reach a node with Parent = null). Listing~\ref{lst_aj_root} shows the code for this operation.
 
 \begin{lstlisting}[language=java, caption=Root for Adjacency List, label=lst_aj_root]
-
 /** Returns the first node after executing the query.*/
 static Node getOneNode(String query){...}
 
@@ -226,12 +226,15 @@ SELECT * FROM Nodes WHERE Parent=(SELECT Parent FROM Nodes WHERE ID='E') AND ID 
 
 \end{lstlisting}
 
-\noindent{\bf Leaves}
+\noindent{\bf Leaves, Height, Depth, Path, Member}
 
-The code for the Leaves operation is shown in Listing~\ref{lst_aj_leaves}.
+The algorithms for finding leaves and height of a tree will be similar. Given a node, both algorithms iteratively or recursively perform the same operation on the children of the node until the iteration reaches a leaf node.
+
+For the Leaves operation, when the recursion reaches a leaf node, the node is added to the result and recursion ends.
+
+For the Height operation, when a leaf node is reached, the algorithm returns 1. The parent call returns $1 + max(child calls)$. We only show the algorithm for Leaves in Listing~\ref{lst_aj_leaves}.
 
 \begin{lstlisting}[language=java, caption=Leaves, label=lst_aj_leaves]
-
 /** Returns an array of leaf nodes under n. */
 static Node[] Leaves(Node n)
 {
@@ -244,57 +247,80 @@ static Node[] Leaves(Node n)
 static void Leaves(Node n, List<Node> result)
 {
     Node[] children = getChildren(n);
-    
     if(children.length == 0)
     {
         result.add(n);
         return;
     }
-    
     for(Node child : children)
         Leaves(child, result);
 }
 
 \end{lstlisting}
 
-Although the preceding operations are easy to perform, the drawback of the adjacency list method is that some of the listed operations require multiple queries to be submitted to the database. These operations follows:
+In addition, the algorithm for Depth, Path, and Member are very similar to the algorithm for finding root. Each algorithm recursively (or iteratively) reaches for the root of the tree while keeping state. For example, the algorithm for depth has to keep track of node count during the iterations.
 
-\begin{itemize}
-\item Member
-\item Find Ancestors
-\item Find Descendants
-\item Get Tree
-\end{itemize}
+For the algorithm for Memeber, the iteration can stop once the root node of the subtree $t$ is reached. The algorithm is given in Listing~\ref{lst_aj_member}.
 
+\begin{lstlisting}[language=java, caption=Member, label=lst_aj_member]
+static boolean Member(Node n, Node t)
+{
+    while(n != null)
+    {
+        if(n.equals(t))  //n = t
+            return true;
+        n = getParent(n);
+    }
+    return false;
+}
+
+\end{lstlisting}
+
+\noindent{\bf Tree}
+
+Listing~\ref{lst_aj_tree} shows the algorithm to get the BST of tree in this relational model.
+
+\begin{lstlisting}[language=java, caption=Tree via Adjacency List, label=lst_aj_tree]
+static Node[] Tree(Node n)
+{
+    Queue<Node> q = new LinkedList<Node>();
+    ArrayList<Node> result = new ArrayList<Node>();
+    q.add(n); //enqueue
+    result.add(n);
+    while(!q.isEmpty())
+    {
+        Node head = q.remove();
+        Node[] ch = getChildren(head);
+        for(Node c : ch)
+        {
+            result.add(c);
+            q.add(c);
+        }
+    }
+    return result.toArray();
+}
+\end{lstlisting}
+
+\rule{2cm}{0.5pt}
+
+After examining these implementations, we come to the conclusion that the operations are trivial in the adjacency list model are:
+\begin{inparaenum}[\itshape 1)]
+\item parent,
+\item children,
+\item siblings.
+\end{inparaenum}
+
+All other operations require iterations (or recursions): \begin{inparaenum}[\itshape 1)]
+\item root,
+\item leaves,
+\item height,
+\item depth,
+\item path,
+\item member,
+\item tree.
+\end{inparaenum}
 The number of queries of these operations usually depend on the depth of the node in question. Each query submitted to the database incurs communication cost between the processing program and the database; therefore, the cost of computing these operations increases as the depth of the tree increase.
 
-Listing~\ref{member} shows the algorithm for finding if node $B$ is a member of tree $A$. Notice the algorithm issues multiple queries to the database.
-
-\begin{lstlisting}[caption={Algorithm for Member operation},label=member]
-//Returns true if B is part of Tree A
-function Member(char B, char A)
-	while(true)
-		if(B == A)
-			return true
-		if(B == null)
-			return false
-		B = query("SELECT Parent FROM Nodes WHERE ID=B")
-\end{lstlisting}
-
-Listing~\ref{AL_PrintTree} shows the recursive algorithm of PrintTree for the adjacency list method.
-
-\begin{lstlisting}[caption={Algorithm for Member operation},label=AL_PrintTree]
-PrintTree(char nodeId, int level = 0)
-	//Output current node
-	for(i = 0 to level)
-		Print(' ')
-	Print('nodeId')
-	
-	//Output children
-	children = query("SELECT ID FROM Nodes WHERE Parent=" + nodeId)
-	foreach(child in children)
-		PrintTree(child, level + 1)
-\end{lstlisting}
 
 \section{Nested Set}\label{sec-nested-set}
 
@@ -304,30 +330,42 @@ Another way of representing hierarchical data in relational database is the nest
 CREATE TABLE Nodes (
     ID CHAR PRIMARY KEY NOT NULL,
     Parent CHAR NULL,
-    Left INT NOT NULL,
-    Right INT NOT NULL,
+    L INT NOT NULL,
+    R INT NOT NULL,
     FOREIGN KEY (Parent) REFERENCES Nodes (ID)
 )
 \end{lstlisting}	
 
-In this model, there are, for each node, two additional fields: Left and Right values. These two values provides an ordering of nodes in a tree. Algorithm for assigning left and right value for nodes is shown in Listing~\ref{ns_lr}.
+In this model, there are, for each node, two additional fields: $L$ and $R$. These two fields stand for left and right. These two values provides an ordering of nodes in a tree. Algorithm for assigning $L$ and $R$ value for nodes is shown in Listing~\ref{ns_assignlr}.
 
-\begin{lstlisting}[caption={Algorithm for Left-Right value assignment for nested set model},label=ns_lr]
-int LROrder(Node node, int count = 1)
-	n.left = count
-	foreach(child in Children(node))
-		count = LROrder(child, count + 1)
-	n.right = count++
-	return count
+\begin{lstlisting}[language=java, caption={Algorithm for Left-Right value assignment for nested set model},label=ns_assignlr]
+int AssignLR(Node node)
+{
+    AssignLR(node, 1);
+}
+
+/** Recursively assign LR for each node */
+int AssignLR(Node node, int count)
+{
+	node.L = count;
+	Node[] children = getChildren(node);
+	for(Node child : children)
+		count = AssignLR(child, count + 1)
+	node.R = ++count;
+	return count;
+}
 \end{lstlisting}
 
-The following steps summarizes LROrder algorithm:
+The heart of the algorithm in Listing~\ref{ns_assignlr} is the recursive version (line 6--15) of $AssignLR()$ function. This function takes 2 parameters: $node$, which is the root node of a tree, and $count$ which is a variable to keep track of the current LR value. The $count$ is initially set to 1, so that $L$ of the root is set to 1.
+
+The key points the algorithm is given below:
 
 \begin{enumerate}
-\item Assign $count$ to the $left$ of current node $n$.
-\item For each child of node $n$, call LROrder for that child.
-\item After the LROrder call is complete for each child, increment and assign $count$ to the right value of current node $n$.
-\item Return $count$
+\item Initially, the function sets $L$ of the current node as the initial value of $count$ that is passed in (line 9). For example, if $node$ is the root node, and initial $count = 1$, then the left value of the root will be 1.
+\item For each child of $node$, perform depth-first traversal (DFT) by recursively call $Asssign()$ function (line 11--12). The calls traverse the tree (down-trip) from the root the leaf nodes, and at every call $count$ is incremented.
+\item On the up-trip (line 13), $R$ of $node$ is assigned $count + 1$. If node is leaf, then $R$ is assigned, $L + $. Else, $R$ is assigned $R$ of last child + 1.
+%After the LROrder call is complete for each child, increment and assign $count$ to the right value of current node $n$.
+%\item Return $count$
 \end{enumerate}
 
 Figure~\ref{fig:tree-lr} shows the left-right values for the tree in the Figure~\ref{fig:tree} via the algorithm above.
