@@ -184,13 +184,14 @@ SELECT * FROM Nodes WHERE Parent='A'
 
 \subsection{Operations}
 
-In this section, we present how the operations defined in Section~\ref{sec_tree_ops} can be implemented in the context the adjacency list model. For operations that involve simple queries, we provide only the queries; for operations that requires more complex operations (e.g. loops), we present the algorithm in Java programming language.
+In this section, we present how the operations defined in Section~\ref{sec_tree_ops} can be implemented in the context the adjacency list model. For operations that involve si
+mple queries, we provide only the queries; for operations that requires more complex operations (e.g. loops), we present the algorithm in Java programming language.
 
-\noindent{\bf Root}
+\subsubsection{Root Operation}
 
 If the Nodes table contains only a single hierarchy, the operation of finding the root of an arbitrary node in the tree would be a trivial query of looking for the record whose Parent attribute is null. This is \emph{not} the case for us. We assume that the Nodes table contains records for multiple trees. This complicate the query quite a bit and requires us to use some form of iteration (including recursion) to traverse to the top of the tree (until we reach a node with Parent = null). Listing~\ref{lst_aj_root} shows the code for this operation.
 
-\begin{lstlisting}[language=java, caption=Root for Adjacency List, label=lst_aj_root]
+\begin{lstlisting}[language=java, style=java, caption=Root for Adjacency List, label=lst_aj_root]
 /** Returns the first node after executing the query.*/
 static Node getOneNode(String query){...}
 
@@ -206,7 +207,7 @@ static Node Root(Node n)
 \end{lstlisting}
 
 
-\noindent{\bf Parent, Children, Siblings}
+\subsubsection{Parent, Children, Siblings Operations}
 
 The query for these operations are trivial and queries are given in Listing~\ref{lst_aj_parent}
 
@@ -226,7 +227,7 @@ SELECT * FROM Nodes WHERE Parent=(SELECT Parent FROM Nodes WHERE ID='E') AND ID 
 
 \end{lstlisting}
 
-\noindent{\bf Leaves, Height, Depth, Path, Member}
+\subsubsection{Leaves, Height, Depth, Path, Member Operations}
 
 The algorithms for finding leaves and height of a tree will be similar. Given a node, both algorithms iteratively or recursively perform the same operation on the children of the node until the iteration reaches a leaf node.
 
@@ -234,7 +235,7 @@ For the Leaves operation, when the recursion reaches a leaf node, the node is ad
 
 For the Height operation, when a leaf node is reached, the algorithm returns 1. The parent call returns $1 + max(child calls)$. We only show the algorithm for Leaves in Listing~\ref{lst_aj_leaves}.
 
-\begin{lstlisting}[language=java, caption=Leaves, label=lst_aj_leaves]
+\begin{lstlisting}[language=java, style=java, caption=Leaves, label=lst_aj_leaves]
 /** Returns an array of leaf nodes under n. */
 static Node[] Leaves(Node n)
 {
@@ -262,7 +263,7 @@ In addition, the algorithm for Depth, Path, and Member are very similar to the a
 
 For the algorithm for Memeber, the iteration can stop once the root node of the subtree $t$ is reached. The algorithm is given in Listing~\ref{lst_aj_member}.
 
-\begin{lstlisting}[language=java, caption=Member, label=lst_aj_member]
+\begin{lstlisting}[language=java, style=java, caption=Member, label=lst_aj_member]
 static boolean Member(Node n, Node t)
 {
     while(n != null)
@@ -276,11 +277,11 @@ static boolean Member(Node n, Node t)
 
 \end{lstlisting}
 
-\noindent{\bf Tree}
+\subsubsection{Tree Operation}
 
 Listing~\ref{lst_aj_tree} shows the algorithm to get the BST of tree in this relational model.
 
-\begin{lstlisting}[language=java, caption=Tree via Adjacency List, label=lst_aj_tree]
+\begin{lstlisting}[language=java, style=java, caption=Tree via Adjacency List, label=lst_aj_tree]
 static Node[] Tree(Node n)
 {
     Queue<Node> q = new LinkedList<Node>();
@@ -322,7 +323,7 @@ All other operations require iterations (or recursions): \begin{inparaenum}[\its
 The number of queries of these operations usually depend on the depth of the node in question. Each query submitted to the database incurs communication cost between the processing program and the database; therefore, the cost of computing these operations increases as the depth of the tree increase.
 
 
-\section{Nested Set}\label{sec-nested-set}
+\section{Nested Sets}\label{sec-nested-set}
 
 Another way of representing hierarchical data in relational database is the nested set model\cite{journals/trj/Kamfonas92}. This model is an extension of the adjacency list model. The goal of this model is to eliminate the need to issue multiple queries to the database (and the use of recursion) by placing ordering on the nodes. Listing~\ref{ns_schema} shows the relational schema for the nested set model.
 
@@ -338,10 +339,10 @@ CREATE TABLE Nodes (
 
 In this model, there are, for each node, two additional fields: $L$ and $R$. These two fields stand for left and right. These two values provides an ordering of nodes in a tree. Algorithm for assigning $L$ and $R$ value for nodes is shown in Listing~\ref{ns_assignlr}.
 
-\begin{lstlisting}[language=java, caption={Algorithm for Left-Right value assignment for nested set model},label=ns_assignlr]
+\begin{lstlisting}[language=java, style=java, caption={Algorithm for Left-Right value assignment for nested set model},label=ns_assignlr]
 int AssignLR(Node node)
 {
-    AssignLR(node, 1);
+    return AssignLR(node, 1);
 }
 
 /** Recursively assign LR for each node */
@@ -363,12 +364,12 @@ The key points the algorithm is given below:
 \begin{enumerate}
 \item Initially, the function sets $L$ of the current node as the initial value of $count$ that is passed in (line 9). For example, if $node$ is the root node, and initial $count = 1$, then the left value of the root will be 1.
 \item For each child of $node$, perform depth-first traversal (DFT) by recursively call $Asssign()$ function (line 11--12). The calls traverse the tree (down-trip) from the root the leaf nodes, and at every call $count$ is incremented.
-\item On the up-trip (line 13), $R$ of $node$ is assigned $count + 1$. If node is leaf, then $R$ is assigned, $L + $. Else, $R$ is assigned $R$ of last child + 1.
+\item On the up-trip (line 13), $R$ of $node$ is assigned $count + 1$. If node is leaf, then $R$ is assigned, $L + 1$. Else, $R$ is assigned $R$ of last child + 1.
 %After the LROrder call is complete for each child, increment and assign $count$ to the right value of current node $n$.
 %\item Return $count$
 \end{enumerate}
 
-Figure~\ref{fig:tree-lr} shows the left-right values for the tree in the Figure~\ref{fig:tree} via the algorithm above.
+Figure~\ref{fig:tree-lr} shows the left and right values for the tree in the Figure~\ref{fig:tree} after executing $AssignLR()$.
 
 \begin{figure}[H]
 \begin{center}
@@ -377,9 +378,65 @@ Figure~\ref{fig:tree-lr} shows the left-right values for the tree in the Figure~
 \end{center}
 \end{figure}
 
+The left and right (LR) values puts an order on the nodes in the database and establish the following property.
+
+\begin{property}\label{p_ns_desc}
+Given two nodes $a$ and $d$, $d$ is a descendant of $a$ if $(a.L < d.L)$ and $(a.R > d.R)$.
+\end{property}
+
+
 \subsection{Operations}
 
-\subsubsection{Ancestors}
+In this section we present how the operations defined can be implemented in the nested sets model. Due to the fact that the nested sets model is an extension of the adjacency list model, implementation of all operations still work in this model; however, the performance (in terms of time of query) of some operations can be improved taking advantage of the left and right values provided by this model.
+
+The simple operations in the previous model cannot be improved further. These operations are Root, Parent, Children and Siblings. We use the same code as provided earlier.
+
+%The Height operations, unfortunately, also cannot be improved much further. The reason is that although the nest model provides a hierarchical information such that a node is member of another node, it does not
+
+Other operations we can improve efficiency using this model. In previous section, we use iterations (loops or recursions) to realize some of the operations, where in each iteration, one query is submitted to the database. Using nested sets model, in most cases however, we can reduce iterations used in the adjacency model to a single query. The operations we can improve include Leaves, Height, Depth, Path, Member, and Tree.
+
+\subsubsection{Leaves Operation}
+
+The Leaves operation no longer require traversal to the bottom of the tree. Listing~\ref{ns_leaves} shows the query, given an input node of $\{ID:B, L:2, R:7\}$.
+
+\begin{lstlisting}[language=sql,caption={Nested Sets Leaves Operation},label=ns_leaves]
+SELECT * from Nodes N WHERE L > 2 AND R < 7 AND NOT EXIST (SELECT * FROM Nodes WHERE Parent=N.ID) 
+\end{lstlisting}
+
+This query simply reads find all descendant of node B (L > 2 and R < 7) that does not have any children (nested query).
+
+\subsubsection{Path, Depth, Member Operations}
+
+These operations can be directly obtained from Property~\ref{p_ns_desc}. Path is simply a list of ancestors, which we can easily obtain, and the query node itself. Similarly, Depth is the count of the number of records returned from Path Given an input node of $\{ID:E, L:3, R:4\}$, Listing~\ref{ns_ops} shows the query for Path(line 1-2), and Depth(line 4-5).
+
+\begin{lstlisting}[language=sql,caption={Path, Depth, Member Operations},label=ns_ops]
+-- Path Query
+SELECT * FROM Nodes WHERE L <= 3 AND R >= 4 ORDER BY L
+
+-- Depth Query
+SELECT COUNT(*) FROM Nodes WHERE L <= 3 AND R >= 4
+\end{lstlisting}
+
+%\subsubsection{Height}
+
+%Initially it appear that we cannot improve Height using the nested sets model. The left and right values does provide an hierarchical relationship to the data, but how can we use this information to find the longest path from root to a leaf node?
+
+%After some thought, we can use Depth to find the Height of a tree. The Height of a tree is the maximum depth of leaf nodes that are descendants of the root. Listing~\ref{ns_height} shows the query.
+
+%\begin{lstlisting}[language=sql,caption={Height Operation},label=ns_height]
+%SELECT * from Nodes N WHERE L >= 1 AND R <= 20 AND NOT EXIST (SELECT * FROM Nodes WHERE Parent=N.ID)
+%\end{lstlisting}
+
+\subsubsection{Member Operation}
+
+Member match exactly the definition of Property~\ref{p_ns_desc}. Listing~\ref{ns_member} shows a trivial code for this operation.
+
+\begin{lstlisting}[language=java,style=java,caption={Member Operation},label=ns_member]
+static boolean Member(Node n, Node t)
+{
+    return (t.L < n.L) && (t.R > n.R);
+}
+\end{lstlisting}
 
 With nested set model, finding ancestors of a node becomes trivial. Because the left-value of a node is assigned before any child-node is traversed and the right-value after, any \emph{ancestor}, denoted by $a$, of a node $n$ has the following properties:
 
@@ -429,39 +486,57 @@ J & 17 & 18	& D \\ \hline
 
 There are two ways to reconstruct the tree, since there are redundant information in the result table to reconstruct the tree. The first way is to only use the `Parent' column. The second way is to use only the `Left' and `Right' columns (not needing the `Parent' column). Listing~\ref{ns_tree_const1} shows the algorithm for the first approach.
 
-\begin{lstlisting}[caption={Tree reconstruction using Parent},label=ns_tree_const1]
+\begin{lstlisting}[language=java,style=java,caption={Tree reconstruction using Parent},label=ns_tree_const1]
 Node ReconstructTree(List<Record> records)
-	Node root, current = null
-	foreach(Record record in records)
-		if(current == null)
-			current = MakeNode(record)
-			root = current
-		else
-			while(current.ID != record["Parent"])
-				current = current.Parent
-			Node node = MakeNode(record)
-			current.Children.Add(node)
-			current = node
-	return root
+{
+    Node root, current = null;
+    for(Record record : records)
+    {
+        if(current == null)
+        {
+            current = MakeNode(record);
+            root = current;
+        }
+        else
+        {
+            while(current.ID != record["Parent"])
+                current = current.Parent;
+
+            Node node = MakeNode(record);
+            current.Children.Add(node);
+            current = node;
+        }
+    }
+	return root;
+}
 \end{lstlisting}
 
 Listing~\ref{ns_tree_const2} shows the algorithm for the second approach.
 
-\begin{lstlisting}[caption={Tree reconstruction using Left and Right value},label=ns_tree_const2]
+\begin{lstlisting}[language=java,style=java,caption={Tree reconstruction using Left and Right value},label=ns_tree_const2]
 //Returns the root node as the tree
 Node ReconstructTree(List<Record> records)
-	Node root, current = null
-	foreach(Record record in records)
-		if(current == null) //This should only be run once
-			current = MakeNode(record)
-			root = current
-		else
-			while(!(current.Left < record["Left"] and current.Right > record["Right"]))
-				current = current.Parent
-			Node node = MakeNode(record)
-			current.Children.Add(node)
-			current = node
-	return root
+{
+    Node root, current = null;
+    for(Record record : records)
+    {
+        if(current == null) //This should only be run once
+        {
+            current = MakeNode(record);
+            root = current;
+        }        
+        else
+		{
+            while(!(current.Left < record["Left"] and current.Right > record["Right"]))
+                current = current.Parent;
+                
+            Node node = MakeNode(record);
+            current.Children.Add(node);
+            current = node;
+        }
+    }
+    return root;
+}
 \end{lstlisting}	
 
 \subsubsection{Print Tree}
