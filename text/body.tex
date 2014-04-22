@@ -574,3 +574,95 @@ void PrintTree(List<Record> records)
 \end{lstlisting}
 
 \section{Evaluation}
+
+In this section we present our performance evaluation of hierarchical data retrieval techniques presented in Section~\ref{sec-adj-list} and \ref{sec-nested-set}. The experiment is divided into two major components: the server and the experiment logic. The server runs an instance of MySQL database and manages the experimental datasets, which is covered in Section~\ref{sec_experimental_data}. The evaluations are performed by requesting these data, with specific characterisitics, from the server. Table XXXX shows the configuration of the server.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+CPU & Intel Processor 64-bit \\ \hline
+Memory & 4 GB \\ \hline
+Operating System & Ubuntu 13.10 \\ \hline
+Database System & MySQL 5.5 Community Edition \\ \hline 
+\end{tabular}
+\caption{Dataset size\label{table:tbl_server_config}}
+\end{table}
+
+In addition, when running the database system, the following settings are made:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+Variable & Set Value & Default Value \\ \hline
+max\_sp\_recursion\_depth & 100 & 0 \\ \hline
+maximum\_stack memory & 100 & 100 \\ \hline
+some other memory & 100 & 100 \\ \hline
+\end{tabular}
+\caption{Database Server Non-default Settings\label{table:tbl_server_settings}}
+\end{table}
+
+Note: briefly describe the reason for above settings.
+
+The experiment component implements the logic of the data operators and the experiments and runs on a separate computer from the server. The experimental code is written in Java and utilizes the MySQL JDBD Connector\footnote{http://www.oracle.com/technetwork/java/javase/jdbc/index.html} to communicate with the server.
+
+The experiments exercise the data operators and report the time to run each operation. The operations in turn query the database to retrieve qualified records as specified by the purpose of each operation stated in this paper. The following table summarizes the configuration of the machine that runs the experiment.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+CPU & Intel Processor 64-bit \\ \hline
+Memory & 4 GB \\ \hline
+Operating System & Ubuntu 13.10 \\ \hline
+Database System & MySQL 5.5 Community Edition \\ \hline 
+\end{tabular}
+\caption{Dataset size\label{table:tbl_server_config}}
+\end{table}
+
+The following are the command to run the experiments.
+
+The reason that the computer that runs the experiments have more memory than the server is that the experiments and JDBC uses large amount of memory. At early stages of coding the experiments, the author repeatedly getting Out Of Memory Error from the Java Virtual Machine. The code for the experiments have been rewrote several times to reduce memory consumption. The error is also mitigated by expanding the allocated memory to the program by running the command above.
+
+The sever and the client machines are connected by a 100mbs local area network.
+
+\subsection{Experimental Data}\label{sec_experimental_data}
+
+The experimental data are stored in MySQL database tables (on the server). All data tables have the same fields as described in Listing~\ref{ns_schema}. These tables are essentially the \emph{Nodes} tables described in aforementioned code listing. Due to that all tables have the same structure,when running experiments of the adjacency list model, the left and right (LR) fields are ignored by the implementation.
+
+In addition, each record (an entry in data table) also contains additional 90 ASCII characters, divided into two fields (45 characters each), to simulate data payload in typical database record. However, these additional data is currently not being used in experiments, due to the limitation of amount of memory in machines that run the experiments.
+
+Experimental data are generated synthetically via a SQL script (see appendix).All data are full trees\footnote{http://en.wikipedia.org/wiki/Binary\_tree\#Types\_of\_binary\_trees} with the following two properties:
+
+\begin{enumerate}
+\item Order: the number of children per node. This is also known as the fan-out or out-degree of a tree.
+\item Height: the number of nodes of the longest path from root to a leaf node.
+\end{enumerate} 
+
+Each of the properties ranges from 2 to 10, with the exception that higher-order datasets have lower max height. For each combination of order and height, a dataset is generated and stored in a database table. The following table shows the size (number of records) of each data table.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+ & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline\hline
+2  & 3 & 7 & 15 & 31 & 63 & 127 & 255 & 511 & 1,023 \\ \hline
+3  & 4 & 13 & 40 & 121 & 364 & 1,093 & 3,280 & 9,841 & 29,524 \\ \hline
+4  & 5 & 21 & 85 & 341 & 1,365 & 5,461 & 21,845 & 87,381 & 349,525 \\ \hline
+5  & 6 & 31 & 156 & 781 & 3,906 & 19,531 & 97,656 & 488,281 & 2,441,406 \\ \hline
+6  & 7 & 43 & 259 & 1,555 & 9,331 & 55,987 & 335,923 & 2,015,539 & 12,093,235 \\ \hline
+7  & 8 & 57 & 400 & 2,801 & 19,608 & 137,257 & 960,800 & 6,725,601 & 47,079,208 \\ \hline
+8  & 9 & 73 & 585 & 4,681 & 37,449 & 299,593 & 2,396,745 & 19,173,961 & 153,391,689 \\ \hline
+9  & 10 & 91 & 820 & 7,381 & 66,430 & 597,871 & 5,380,840 & 48,427,561 & 435,848,050 \\ \hline
+10 & 11 & 111 & 1,111 & 11,111 & 111,111 & 1,111,111 & 11,111,111 & 111,111,111 & 1,111,111,111 \\ \hline
+\end{tabular}
+\caption{Dataset size\label{table:tbl_data_size}}
+\end{table}
+
+
+\subsection{Experimental Result}\label{sec_experimental_result}
+- Experiment data
+- Client and server machine specifications
+- Client and server software and how to run the experiments
+- Results
