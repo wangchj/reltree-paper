@@ -640,24 +640,27 @@ Experimental data are generated synthetically via a SQL script (see appendix).Al
 \item Height: the number of nodes of the longest path from root to a leaf node.
 \end{enumerate} 
 
-Each of the properties ranges from 2 to 10, with the exception that higher-order datasets have lower max height. For each combination of order and height, a dataset is generated and stored in a database table. The following table shows the size (number of records) of each data table.
+Each of the properties ranges from 2 to 10, with the exception that higher-order datasets have lower max height. For each combination of order and height, a dataset is generated and stored in a database table. Table~\ref{tbl:reltree_data_size} shows the size (number of records) of each data table.
+
+\newcommand*\rot{\rotatebox{90}}
 
 \begin{table}[h]
-\centering
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
-\hline
- & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline\hline
-2  & 3 & 7 & 15 & 31 & 63 & 127 & 255 & 511 & 1,023 \\ \hline
-3  & 4 & 13 & 40 & 121 & 364 & 1,093 & 3,280 & 9,841 & 29,524 \\ \hline
-4  & 5 & 21 & 85 & 341 & 1,365 & 5,461 & 21,845 & 87,381 & 349,525 \\ \hline
-5  & 6 & 31 & 156 & 781 & 3,906 & 19,531 & 97,656 & 488,281 & 2,441,406 \\ \hline
-6  & 7 & 43 & 259 & 1,555 & 9,331 & 55,987 & 335,923 & 2,015,539 & 12,093,235 \\ \hline
-7  & 8 & 57 & 400 & 2,801 & 19,608 & 137,257 & 960,800 & 6,725,601 & 47,079,208 \\ \hline
-8  & 9 & 73 & 585 & 4,681 & 37,449 & 299,593 & 2,396,745 & 19,173,961 & 153,391,689 \\ \hline
-9  & 10 & 91 & 820 & 7,381 & 66,430 & 597,871 & 5,380,840 & 48,427,561 & 435,848,050 \\ \hline
-10 & 11 & 111 & 1,111 & 11,111 & 111,111 & 1,111,111 & 11,111,111 & 111,111,111 & 1,111,111,111 \\ \hline
+\begin{tabular}{lc|r|r|r|r|r|r|r|r|r|}
+\cline{3-11}
+ & \multicolumn{1}{l}{} & \multicolumn{9}{|c|}{\textbf{Height}} \\ \cline{3-11} 
+ & \multicolumn{1}{l}{} & \multicolumn{1}{|c}{\textbf{2}} & \multicolumn{1}{|c}{\textbf{3}} & \multicolumn{1}{|c}{\textbf{4}} & \multicolumn{1}{|c}{\textbf{5}} & \multicolumn{1}{|c}{\textbf{6}} & \multicolumn{1}{|c}{\textbf{7}} & \multicolumn{1}{|c}{\textbf{8}} & \multicolumn{1}{|c}{\textbf{9}} & \multicolumn{1}{|c|}{\textbf{10}} \\ \hline
+\multicolumn{1}{|l}{\multirow{9}{*}{\rot{\textbf{Rows}}}} & \multicolumn{1}{|c|}{\textbf{2}} & 3 & 7 & 15 & 31 & 63 & 127 & 255 & 511 & 1,023 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{3}} & 4 & 13 & 40 & 121 & 364 & 1,093 & 3,280 & 9,841 & 29,524 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{4}} & 5 & 21 & 85 & 341 & 1,365 & 5,461 & 21,845 & 87,381 & 349,525 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{5}} & 6 & 31 & 156 & 781 & 3,906 & 19,531 & 97,656 & 488,281 & 2,441,406 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{6}} & 7 & 43 & 259 & 1,555 & 9,331 & 55,987 & 335,923 & 2,015,539 & 12,093,235 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{7}} & 8 & 57 & 400 & 2,801 & 19,608 & 137,257 & 960,800 & 6,725,601 & 47,079,208 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{8}} & 9 & 73 & 585 & 4,681 & 37,449 & 299,593 & 2,396,745 & 19,173,961 & 153,391,689 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{9}} & 10 & 91 & 820 & 7,381 & 66,430 & 597,871 & 5,380,840 & 48,427,561 & 435,848,050 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{10}} & 11 & 111 & 1,111 & 11,111 & 111,111 & 1,111,111 & 11,111,111 & 111,111,111 & 1,111,111,111 \\ \hline
 \end{tabular}
-\caption{Dataset size\label{table:tbl_data_size}}
+\caption{Test data size with respect to Order and Height}
+\label{tbl:reltree_data_size}
 \end{table}
 
 
