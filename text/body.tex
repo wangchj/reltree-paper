@@ -629,11 +629,25 @@ The sever and the client machines are connected by a 100mbs local area network.
 
 \subsection{Experimental Data}\label{sec_experimental_data}
 
-The experimental data are stored in MySQL database tables (on the server). All data tables have the same fields as described in Listing~\ref{ns_schema}. These tables are essentially the \emph{Nodes} tables described in aforementioned code listing. Due to that all tables have the same structure,when running experiments of the adjacency list model, the left and right (LR) fields are ignored by the implementation.
+The experimental datasets are synthetically generated relational hierarchies, each containing the fields ID, Parent, L and R as described for the Nodes table in Listing~\ref{ns_schema}. In addition, each record (an entry in data table) also contains additional 90 ASCII characters, divided into two fields (45 characters each), to simulate data payload in typical database record. However, these additional data is currently not being used in experiments, due to the limitation of amount of memory in machines that run the experiments. The structure of the experimental data shown in Table~\ref{tb_rel_exp_data_format}.
 
-In addition, each record (an entry in data table) also contains additional 90 ASCII characters, divided into two fields (45 characters each), to simulate data payload in typical database record. However, these additional data is currently not being used in experiments, due to the limitation of amount of memory in machines that run the experiments.
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{Field} & \textbf{Type} & \textbf{Null} & \textbf{Key} & \textbf{Default} & \textbf{Extra}  \\ \hline
+id             & int(11)       & NO            & PRI          & NULL             & auto\_increment \\ \hline
+parent         & int(11)       & YES           & MUL          & NULL             &                 \\ \hline
+l              & int(11)       & NO            & MUL          & NULL             &                 \\ \hline
+r              & int(11)       & NO            & MUL          & NULL             &                 \\ \hline
+data1          & varchar(45)   & NO            &              & NULL             &                 \\ \hline
+data2          & varchar(45)   & NO            &              & NULL             &                 \\ \hline
+\end{tabular}
+\caption{Experimental data relational format}
+\label{tb_rel_exp_data_format}
+\end{table}
 
-Experimental data are generated synthetically via a SQL script (see appendix).All data are full trees\footnote{http://en.wikipedia.org/wiki/Binary\_tree\#Types\_of\_binary\_trees} with the following two properties:
+The datasets are created by our data generation SQL script (see appendix) and stored on in the database on the server. In addition to being a full tree\footnote{http://en.wikipedia.org/wiki/Binary\_tree\#Types\_of\_binary\_trees}, each dataset is characterized by the following properties:
 
 \begin{enumerate}
 \item Order: the number of children per node. This is also known as the fan-out or out-degree of a tree.
@@ -649,7 +663,7 @@ Each of the properties ranges from 2 to 10, with the exception that higher-order
 \cline{3-11}
  & \multicolumn{1}{l}{} & \multicolumn{9}{|c|}{\textbf{Height}} \\ \cline{3-11} 
  & \multicolumn{1}{l}{} & \multicolumn{1}{|c}{\textbf{2}} & \multicolumn{1}{|c}{\textbf{3}} & \multicolumn{1}{|c}{\textbf{4}} & \multicolumn{1}{|c}{\textbf{5}} & \multicolumn{1}{|c}{\textbf{6}} & \multicolumn{1}{|c}{\textbf{7}} & \multicolumn{1}{|c}{\textbf{8}} & \multicolumn{1}{|c}{\textbf{9}} & \multicolumn{1}{|c|}{\textbf{10}} \\ \hline
-\multicolumn{1}{|l}{\multirow{9}{*}{\rot{\textbf{Rows}}}} & \multicolumn{1}{|c|}{\textbf{2}} & 3 & 7 & 15 & 31 & 63 & 127 & 255 & 511 & 1,023 \\ \cline{2-11} 
+\multicolumn{1}{|l}{\multirow{9}{*}{\rot{\textbf{Order}}}} & \multicolumn{1}{|c|}{\textbf{2}} & 3 & 7 & 15 & 31 & 63 & 127 & 255 & 511 & 1,023 \\ \cline{2-11} 
 \multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{3}} & 4 & 13 & 40 & 121 & 364 & 1,093 & 3,280 & 9,841 & 29,524 \\ \cline{2-11} 
 \multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{4}} & 5 & 21 & 85 & 341 & 1,365 & 5,461 & 21,845 & 87,381 & 349,525 \\ \cline{2-11} 
 \multicolumn{1}{|l}{\textbf{}} & \multicolumn{1}{|c|}{\textbf{5}} & 6 & 31 & 156 & 781 & 3,906 & 19,531 & 97,656 & 488,281 & 2,441,406 \\ \cline{2-11} 
@@ -663,6 +677,28 @@ Each of the properties ranges from 2 to 10, with the exception that higher-order
 \label{tbl:reltree_data_size}
 \end{table}
 
+With the server configuration described earlier in this section, an estimate of the amount of time to generate the data sets is shown in Table~\ref{tb_rel_data_gentime_est}.
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[h]
+\begin{tabular}{cc|c|c|c|c|c|c|c|c|c|}
+\cline{3-11}
+                                                     &                                   & \multicolumn{9}{|c|}{\textbf{Height}}                                                                               \\ \cline{3-11} 
+                                                     &                                   & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} \\ \hline
+\multicolumn{1}{|c}{\multirow{9}{*}{\rot{\textbf{Order}}}} & \multicolumn{1}{|c|}{\textbf{2}}  & 200 ms     & 470 ms     & 470 ms     & 2.07 sec   & 4.2 sec    & 8.47 sec   & 17 sec     & 34.07 sec  & 1.14 min    \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{3}}  & 270 ms     & 870 ms     & 2.67 sec   & 8.07 sec   & 24.27 sec  & 1.21 min   & 3.64 min   & 10.93 min  & 32.80 min   \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{4}}  & 330 ms     & 1.4 sec    & 5.67 sec   & 22.73 sec  & 1.52 min   & 6.07 min   & 24.27 min  & 1.62 hr    & 6.47 hr     \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{5}}  & 400 ms     & 2.07 sec   & 10.4 sec   & 52.07 sec  & 4.34 min   & 21.7 min   & 1.81 hr    & 9.04 hr    & 1.88 days   \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{6}}  & 470 ms     & 2.86 sec   & 17.27 sec  & 1.73 min   & 10.37 min  & 1.04 hr    & 6.22 hr    & 1.56 days  & 9.33 days   \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{7}}  & 530 ms     & 3.8 sec    & 26.67 sec  & 3.11 min   & 21.79 min  & 2.54 hr    & 17.79 hr   & 5.19 days  & 36.33 days  \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{8}}  & 600 ms     & 4.87 sec   & 39 sec     & 5.20 min   & 41.61 min  & 5.55 hr    & 1.85 days  & 14.79 days & 118.36 days \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{9}}  & 670 ms     & 6.07 sec   & 54.67 sec  & 8.20 min   & 1.23 hr    & 11.07 hr   & 4.15 days  & 37.37 days & 336.30 days \\ \cline{2-11} 
+\multicolumn{1}{|c}{\textbf{}}                       & \multicolumn{1}{|c|}{\textbf{10}} & 730 ms     & 7.4 sec    & 1.23 min   & 12.35 min  & 2.06 hr    & 20.58 hr   & 8.57 days  & 85.73 days & 857.34 days \\ \hline
+\end{tabular}
+\caption{Experimental data generation time estimate}
+\label{tb_rel_data_gentime_est}
+\end{table}
 
 \subsection{Experimental Result}\label{sec_experimental_result}
 - Experiment data
