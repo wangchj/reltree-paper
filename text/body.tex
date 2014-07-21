@@ -659,6 +659,7 @@ Each of the properties ranges from 2 to 10, with the exception that higher-order
 \newcommand*\rot{\rotatebox{90}}
 
 \begin{table}[h]
+\centering
 \begin{tabular}{lc|r|r|r|r|r|r|r|r|r|}
 \cline{3-11}
  & \multicolumn{1}{l}{} & \multicolumn{9}{|c|}{\textbf{Height}} \\ \cline{3-11} 
@@ -682,6 +683,7 @@ With the server configuration described earlier in this section, an estimate of 
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
 \begin{table}[h]
+\centering
 \begin{tabular}{cc|c|c|c|c|c|c|c|c|c|}
 \cline{3-11}
                                                      &                                   & \multicolumn{9}{|c|}{\textbf{Height}}                                                                               \\ \cline{3-11} 
@@ -700,7 +702,16 @@ With the server configuration described earlier in this section, an estimate of 
 \label{tb_rel_data_gentime_est}
 \end{table}
 
-\subsection{Experimental Result}\label{sec_experimental_result}
+
+\subsection{Experimental Result}\label{sec_rt_eval_result}
+
+The operations defined in Section~\ref{sec_tree_ops} are divided into three groups based on the amount of work required to accomplish the task. These groups are 1. \{Root, Depth, Path, Member\}, 2. \{Leaves, Height, Tree\}, 3. \{parent, children, siblings\}.
+
+Members in the same group have the same time-complexity. For group 1-3 in the non-nested-sets implementation, the performance in terms of big-O would correspond to $O(d_n)$, $O(|N|)$, and $O(1)$, respectively. In this section, we only report the performance evaluation of relevant operation from group 1 and 2, since other operations in the same group will provide the same result. Group 3 will not be considered in this section, since these operations have near linear time-complexity and there is no implementation difference in both adjacency-list model and nested-sets model.
+
+
+
+
 - Experiment data
 - Client and server machine specifications
 - Client and server software and how to run the experiments
