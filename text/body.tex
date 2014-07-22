@@ -575,7 +575,15 @@ void PrintTree(List<Record> records)
 
 \section{Evaluation}
 
-In this section we present our performance evaluation of hierarchical data retrieval techniques presented in Section~\ref{sec-adj-list} and \ref{sec-nested-set}. The experiment is divided into two major components: the server and the experiment logic. The server runs an instance of MySQL database and manages the experimental datasets, which is covered in Section~\ref{sec_experimental_data}. The evaluations are performed by requesting these data, with specific characterisitics, from the server. Table XXXX shows the configuration of the server.
+This section presents the performance evaluation of the adjacency list and nested sets models presented in section~\ref{sec-adj-list} and \ref{sec-nested-set}, respectively. Performance are evaluated based on the running time of the operations described in section~\ref{sec_tree_ops}, under each data model.
+
+The evaluation is composed of two parts: the server and the client. The server runs an instance of MySQL database and holds hierarchical structure and data. The client connects to the server via local area network, implements the operations, and reports the amount of time to run them.
+
+This section is organized as follows. Section~\ref{sec-server-config} and section~\ref{sec-client-config} describe the environment and configuration of the server and the client.
+
+\subsection{Server Configuration}\label{sec-server-config}
+
+Table~\ref{table:tbl_server_config} shows the software and hardware configuration of the server machine.
 
 \begin{table}[h]
 \centering
@@ -605,29 +613,30 @@ some other memory & 100 & 100 \\ \hline
 
 Note: briefly describe the reason for above settings.
 
-The experiment component implements the logic of the data operators and the experiments and runs on a separate computer from the server. The experimental code is written in Java and utilizes the MySQL JDBD Connector\footnote{http://www.oracle.com/technetwork/java/javase/jdbc/index.html} to communicate with the server.
+\subsection{Client Configuration}\label{sec-client-config}
 
-The experiments exercise the data operators and report the time to run each operation. The operations in turn query the database to retrieve qualified records as specified by the purpose of each operation stated in this paper. The following table summarizes the configuration of the machine that runs the experiment.
+The client machine is responsible for running the experiment code, which is written in Java and connected to the database using MySQL JDBD Connector\footnote{http://www.oracle.com/technetwork/java/javase/jdbc/index.html}. Table~\ref{tbl-client-config} lists configurations of the client environment.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|}
 \hline
 CPU & Intel Processor 64-bit \\ \hline
-Memory & 4 GB \\ \hline
-Operating System & Ubuntu 13.10 \\ \hline
-Database System & MySQL 5.5 Community Edition \\ \hline 
+Memory & 12 GB \\ \hline
+Operating System & Ubuntu 13.10 Desktop \\ \hline
+Programming Language & Java 7 (OpenJDK 7) \\ \hline
+Database Connector   & JDBC mysql-connector-java-5.1.29 \\ \hline
 \end{tabular}
-\caption{Dataset size\label{table:tbl_server_config}}
+\caption{Dataset size\label{tbl-client-config}}
 \end{table}
 
-The following are the command to run the experiments.
+At early stages of coding the experiments, the author repeatedly getting Out Of Memory Error from the Java Virtual Machine. The code for the experiments have been rewritten several times to reduce memory consumption. The error can also be mitigated by expanding the allocated memory to the program. The following are the command sets the minimum and maximum heap memory allocated to the experiment to 8 and 9 gigabytes.
 
-The reason that the computer that runs the experiments have more memory than the server is that the experiments and JDBC uses large amount of memory. At early stages of coding the experiments, the author repeatedly getting Out Of Memory Error from the Java Virtual Machine. The code for the experiments have been rewrote several times to reduce memory consumption. The error is also mitigated by expanding the allocated memory to the program by running the command above.
+\begin{lstlisting}[language=bash,caption={Nodes table for nested set model},label=run_client]
+java -cp lib/mysql-connector-java-5.1.29-bin.jar:. -Xms8g -Xmx9g Experiment
+\end{lstlisting}
 
-The sever and the client machines are connected by a 100mbs local area network.
-
-\subsection{Experimental Data}\label{sec_experimental_data}
+\subsection{Data Format and Generation}\label{sec_experimental_data}
 
 The experimental datasets are synthetically generated relational hierarchies, each containing the fields ID, Parent, L and R as described for the Nodes table in Listing~\ref{ns_schema}. In addition, each record (an entry in data table) also contains additional 90 ASCII characters, divided into two fields (45 characters each), to simulate data payload in typical database record. However, these additional data is currently not being used in experiments, due to the limitation of amount of memory in machines that run the experiments. The structure of the experimental data shown in Table~\ref{tb_rel_exp_data_format}.
 
@@ -705,12 +714,35 @@ With the server configuration described earlier in this section, an estimate of 
 
 \subsection{Experimental Result}\label{sec_rt_eval_result}
 
-The operations defined in Section~\ref{sec_tree_ops} are divided into three groups based on the amount of work required to accomplish the task. These groups are 1. \{Root, Depth, Path, Member\}, 2. \{Leaves, Height, Tree\}, 3. \{parent, children, siblings\}.
+The operations defined in Section~\ref{sec_tree_ops} are divided into three categories based on their running time complexity which are $O(log N)$, $O(N)$, and $O(1)$. Members in a category have the similar running time; therefore we have to show the performance for one operation per group. The membership of each category shows as follows:
 
-Members in the same group have the same time-complexity. For group 1-3 in the non-nested-sets implementation, the performance in terms of big-O would correspond to $O(d_n)$, $O(|N|)$, and $O(1)$, respectively. In this section, we only report the performance evaluation of relevant operation from group 1 and 2, since other operations in the same group will provide the same result. Group 3 will not be considered in this section, since these operations have near linear time-complexity and there is no implementation difference in both adjacency-list model and nested-sets model.
+\begin{enumerate}
+\item $O(log N)$ : Root, Depth, Path, Member
+\item $O(N)$ : Heaves, Height, Tree
+\item $O(1)$ : Parent, Children, Siblings
+\end{enumerate}
 
+In this section, we report the performance of category 1 and 2. Category 3 is not reported since the input size does not affect the outcome and that the implementation are the same for both adjacency-list and nested-sets model.
 
+\subsubsection{Category 1 - O(log N)}
 
+Figure~\ref{fig-root-al} depicts the running time in milliseconds of the finding root operation for the adjacency list model. From this result, we can rough infer that the time complexity of this algorithm is linear with respect to the depth, and constant with respect to the width (order) of the tree.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=6.5in]{images/root-al-wire.pdf}
+\caption{Example of a tree in nested set model.\label{fig-root-al}}
+\end{center}
+\end{figure}
+
+Figure~\ref{fig-root-ns} depicts the running time in milliseconds of the finding root operation for the nested sets model. One can easily see that it is an improvement over the adjacency list model. In this result, the time complexity with increasing depth of the tree has reduced to constant. The time complexity with increasing width stayed constant, with slight constant improvement.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=6.5in]{images/root-ns-wire.pdf}
+\caption{Example of a tree in nested set model.\label{fig-root-ns}}
+\end{center}
+\end{figure}
 
 - Experiment data
 - Client and server machine specifications
