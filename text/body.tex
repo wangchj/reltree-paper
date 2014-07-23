@@ -728,7 +728,7 @@ In this section, we report the performance of category 1 and 2. Category 3 is no
 
 Figure~\ref{fig-root-al} depicts the running time in milliseconds of the finding root operation for the adjacency list model. From this result, we can rough infer that the time complexity of this algorithm is linear with respect to the depth, and constant with respect to the width (order) of the tree.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=6.5in]{images/root-al-wire.pdf}
 \caption{Example of a tree in nested set model.\label{fig-root-al}}
@@ -737,14 +737,35 @@ Figure~\ref{fig-root-al} depicts the running time in milliseconds of the finding
 
 Figure~\ref{fig-root-ns} depicts the running time in milliseconds of the finding root operation for the nested sets model. One can easily see that it is an improvement over the adjacency list model. In this result, the time complexity with increasing depth of the tree has reduced to constant. The time complexity with increasing width stayed constant, with slight constant improvement.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=6.5in]{images/root-ns-wire.pdf}
 \caption{Example of a tree in nested set model.\label{fig-root-ns}}
 \end{center}
 \end{figure}
 
-- Experiment data
-- Client and server machine specifications
-- Client and server software and how to run the experiments
-- Results
+If we take a slice of the previous two figures down where height = 8, we can see the growth of the algorithm with respect to order as shown in Figure~\ref{fig-time-order}. The figures shows, as expected, that the growth of the order of the tree has little effect on the running time of the operation.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6.5in]{images/order.pdf}
+\caption{Running time vs node out-degree (order) at height = 8.\label{fig-time-order}}
+\end{center}
+\end{figure}
+
+For the adjacency list model, the trend appears to be decreasing. However if we look at the running time from order 4 to 8, the trend is flat. I believe that the initial decreasing trend is caused by database warm-up. As more data are cached, the database system is able to reach stable-state.
+
+In addition to the two described models, the figure shows the growth trend for adjacency list model implemented using MySQL stored procedure (labeled Stored). The purpose of the stored implementation is to see if stored procedures facilitates performance. In this case, the store version is better than both adjacency list and nested sets models.
+
+In the figure, the trend line is draw using linear regression from the data from order 1 to 6. The measurement of order 7 and 8 are draw to verify the correctness of the growth model.
+
+In the same manner, if we take a slice of Figure~\ref{fig-root-al} and \ref{fig-root-ns} down where order = 8, we can see the growth of the algorithm with respect to height as shown in Figure~\ref{fig-time-height}.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6.5in]{images/height.pdf}
+\caption{Running time vs tree height at order = 8.\label{fig-time-height}}
+\end{center}
+\end{figure}
+
+The figure shows that for adjacency list model, the running time grows linearly with respect to height. In contract, the running time for the nested sets model shows big improvement over adjacency list, with almost perfect flat trend line model, and indicates constant time-complexity. Once again, the data for stored model shows that the running time are better than both other models; however, the trend shows a linear growth rate, which is not not better than nested sets model larger data set.
