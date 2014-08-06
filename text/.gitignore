@@ -5,6 +5,6 @@
 *.bbl
 *.blg
 *.dvi
-*.pdf
+/*.pdf
 ._*
 *.synctex.gz
