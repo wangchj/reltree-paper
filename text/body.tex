@@ -730,7 +730,7 @@ Figure~\ref{fig-root-al} depicts the running time in milliseconds of the finding
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=6.5in]{images/root-al-wire.pdf}
+\includegraphics[width=6in]{images/root-al-wire.pdf}
 \caption{Running time using Adjacency List Model.\label{fig-root-al}}
 \end{center}
 \end{figure}
@@ -739,7 +739,7 @@ Figure~\ref{fig-root-ns} depicts the running time in milliseconds of the finding
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=6.5in]{images/root-ns-wire.pdf}
+\includegraphics[width=6in]{images/root-ns-wire.pdf}
 \caption{Running time using Nested Sets Model.\label{fig-root-ns}}
 \end{center}
 \end{figure}
@@ -748,7 +748,7 @@ If we take a slice of the previous two figures down where height = 8, we can see
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=6.5in]{images/order.pdf}
+\includegraphics[width=6in]{images/order.pdf}
 \caption{Running time vs node out-degree (order) at height = 8.\label{fig-time-order}}
 \end{center}
 \end{figure}
@@ -763,9 +763,83 @@ In the same manner, if we take a slice of Figure~\ref{fig-root-al} and \ref{fig-
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=6.5in]{images/height.pdf}
+\includegraphics[width=6in]{images/height.pdf}
 \caption{Running time vs tree height at order = 8.\label{fig-time-height}}
 \end{center}
 \end{figure}
 
 The figure shows that for adjacency list model, the running time grows linearly with respect to height. In contract, the running time for the nested sets model shows big improvement over adjacency list, with almost perfect flat trend line model, and indicates constant time-complexity. Once again, the data for the stored model shows that the running time are better than both other models; however, the trend shows a linear growth rate, which is not not better than nested sets model larger data set.
+
+
+\subsubsection{Category 2 - O(N)}
+
+Figure~\ref{fig-leaves-al} depicts the running time, in milliseconds, of the finding root operation using the Adjacency List Model. The running time stayed relative flat, below 100 ms for height and order, below 4.
+
+Above 4, the figure shows that the running time appears to be growing exponentially with respect to both dimensions. The exponential growth with respect to height is expected because the operation has $O(N)$ complexity and each increase of height increase $N$ by a factor of $w$, where $N$ is the number of nodes and $w$ is the order (or width) of the hierarchy.
+
+However, the exponential growth with respect to the order $w$ in the figure is not expected. Increase in the width of the hierarchy only linearly increase the number of node $N$. This is likely caused by additional processing (such as index tree traversal) required by the database system that makes the cost of all nodes higher than $O(N)$.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/al_surface.pdf}
+\caption{Running time of Finding Leaves using Adjacency List Model.\label{fig-leaves-al}}
+\end{center}
+\end{figure}
+
+
+Figure~\ref{fig-leaves-ns} depicts the running time, in milliseconds, of the operation using Nested Sets Model. Careful reader will find that the figure looks almost the same as Figure~\ref{fig-leaves-al}. Although the two figures have the same shape, the running time for the Nested Sets Model is much lower. Taking height = 6 and order = 6 for example, the running time Adjacency List Model is around 7,000 ms, but Nested Sets Model around  9 ms.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/ns_surface.pdf}
+\caption{Running time of Finding Leaves using Nested Sets Model.\label{fig-leaves-ns}}
+\end{center}
+\end{figure}
+
+Figure~\ref{fig-leaves-ns} depicts the running time, in milliseconds, of the operation implemented in MySQL stored procedure. The figure has the same exponential trend as the previous two models; however, the running time using this technique is unreasonably high. For example, with height = 4 and order = 2 (N = 15), the running time is 1831 ms (almost 2 seconds) comparing with 13 ms and 1.15 ms of other two models, for very small data size. For this reason, we will no longer compare the running time of this technique to the other two.
+
+It is interesting to reflect on this a bit. As a reminder, this technique is the Adjacency List version of the algorithm implemented in MySQL stored procedure. That means the algorithm is recursive, and we implemented a stored recursive stored procedure that is called for every node in the hierarchy. The take away here is recursive stored procedure using MySQL is possible, but it is extremely inefficient, to which we attribute this performance.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/sr_surface.pdf}
+\caption{Running time of Finding Leaves using Stored Procedure.\label{fig-leaves-sr}}
+\end{center}
+\end{figure}
+
+If we take a slice of Figure~\ref{fig-leaves-al} and Figure~\ref{fig-leaves-ns} where order = 8, we can see the growth of the algorithms with respect to height, as shown in Figure~\ref{fig-leaves-height1}. One thing to note is that the numbers in this figure for Nested Sets is scaled by a factor, due to the fact that the running time for the Nested Sets Model is so much lower than that of using Adjacency List Model. We already know that the algorithm using Nested Sets is generally better; therefore the purpose of this figure is not to compare the two approach, rather is to create a model of running time for each using the data provided.
+
+
+Based on the data for height = 2 to 6 as shown in previous figure, a running time growth model was build using exponential regression as shown in Figure~\ref{fig-leaves-height2}, where projections are shown in dotted lines. In addition, we use the data for height = 7 to validate our model. As shown in the figure, the projection from the growth model for the Adjacency List implementation fits the validation well. However, the model for the Nested Sets implementation grossly underestimate the value for the validation data. In this case, the running time jumped significantly since height = 7. This could be caused by that the experiment has not reached steady state at height = 6 and we need more data points to build a better model. Another reason could be, the database becomes extremely inefficient in processing the request for height higher than 6.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/height/col.pdf}
+\caption{Running time with respect to height at order = 8.\label{fig-leaves-height1}}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/height/col_trend.pdf}
+\caption{Running time with respect to height model at order = 8.\label{fig-leaves-height2}}
+\end{center}
+\end{figure}
+
+We take the same approach to analyze the running time growth rate of the operation with respect to order and the result is shown in Figure~\ref{fig-leaves-order1} and Figure~\ref{fig-leaves-order2}. Once again, the number for Nested Sets Model in these figures are scaled to fit to combine the graph of both approaches in the same figure.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/order/col.pdf}
+\caption{Running time with respect to order at height = 8.\label{fig-leaves-order1}}
+\end{center}
+\end{figure}
+
+Intuitively, the running time growth rate should grow linearly with respect to the order (or width) of the tree; however, based on the initial observation of the data, it appears to be exponential, so we build a growth rate model also using exponential regression as shown in Figure~\ref{fig-leaves-order2} and using data for order = 7 as validation for our model. As one can see from the figure, the model overestimates the running time for the Adjacency List implementation. This is an indication to confirm our intuition that the growth rate is linear instead of exponential. However, the model fits the validation well for the Nested Sets implementation. This is a bit of a surprise since, this implementation usually have better performance.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=6in]{images/eval/leaves/order/col_trend.pdf}
+\caption{Running time with respect to order model at height = 8.\label{fig-leaves-order2}}
+\end{center}
+\end{figure}
